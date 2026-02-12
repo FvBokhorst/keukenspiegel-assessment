@@ -491,6 +491,7 @@
                 <input type="number" id="ontbijtOmzet" class="input-field" min="0" step="0.50" placeholder="Incl. BTW">
             </div>
         </div>
+        <div id="ontbijtError" class="error-msg">Vul alle velden in om door te gaan.</div>
         <button class="action-btn" onclick="submitMeal('ontbijt')">Volgende</button>
         <button class="skip-btn" onclick="skipMeal('ontbijt')">Wij serveren geen ontbijt – overslaan</button>
     </div>
@@ -513,6 +514,7 @@
                 <input type="number" id="lunchOmzet" class="input-field" min="0" step="0.50" placeholder="Incl. BTW">
             </div>
         </div>
+        <div id="lunchError" class="error-msg">Vul alle velden in om door te gaan.</div>
         <button class="action-btn" onclick="submitMeal('lunch')">Volgende</button>
         <button class="skip-btn" onclick="skipMeal('lunch')">Wij serveren geen lunch – overslaan</button>
     </div>
@@ -535,6 +537,7 @@
                 <input type="number" id="dinerOmzet" class="input-field" min="0" step="0.50" placeholder="Incl. BTW">
             </div>
         </div>
+        <div id="dinerError" class="error-msg">Vul alle velden in om door te gaan.</div>
         <button class="action-btn" onclick="submitMeal('diner')">Volgende</button>
         <button class="skip-btn" onclick="skipMeal('diner')">Wij serveren geen diner – overslaan</button>
     </div>
@@ -584,7 +587,8 @@
             <input type="number" id="banqueting" class="input-field" min="0" placeholder="0" style="max-width:200px;">
         </div>
 
-        <button class="action-btn" onclick="goNext()">Volgende</button>
+        <div id="aanbodError" class="error-msg">Vul alle velden in om door te gaan.</div>
+        <button class="action-btn" onclick="submitAanbod()">Volgende</button>
     </div>
 
     <!-- ============ STAP 9: VARIABELE KOSTEN ============ -->
@@ -624,7 +628,8 @@
                 <input type="number" id="leveringen" class="input-field" min="0" placeholder="Bijv. 5">
             </div>
         </div>
-        <button class="action-btn" onclick="goNext()">Volgende</button>
+        <div id="kostenError" class="error-msg">Vul alle velden in om door te gaan.</div>
+        <button class="action-btn" onclick="submitKosten()">Volgende</button>
     </div>
 
     <!-- ============ STAP 10: SYSTEMATIEK ============ -->
@@ -725,7 +730,8 @@
             <button class="option-btn" onclick="pickDienstverband('1-2 jaar',this)">1 – 2 jaar</button>
             <button class="option-btn" onclick="pickDienstverband('> 2 jaar',this)">Meer dan 2 jaar</button>
         </div>
-        <button class="action-btn" id="teamNextBtn" onclick="goNext()" style="margin-top:var(--space-lg);">Volgende</button>
+        <div id="teamError" class="error-msg">Selecteer hoe lang koks gemiddeld in dienst blijven.</div>
+        <button class="action-btn" id="teamNextBtn" onclick="submitTeam()" style="margin-top:var(--space-lg);">Volgende</button>
     </div>
 
     <!-- ============ STAP 13: EMAIL ============ -->
@@ -912,8 +918,28 @@
 
     function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
+    /* ======== VALIDATIE HELPER ======== */
+    function validateFields(ids, errorId) {
+        var valid = true;
+        ids.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el.value === '') {
+                el.style.borderColor = '#ef4444';
+                valid = false;
+            } else {
+                el.style.borderColor = 'var(--glass-border)';
+            }
+        });
+        var err = document.getElementById(errorId);
+        if (err) err.style.display = valid ? 'none' : 'block';
+        return valid;
+    }
+
     /* ======== STAP 4-6: SERVEERMOMENTEN ======== */
     function submitMeal(meal) {
+        var ids = [meal + 'Dagen', meal + 'Gasten', meal + 'Omzet'];
+        if (!validateFields(ids, meal + 'Error')) return;
+
         var dagen = parseInt(document.getElementById(meal + 'Dagen').value) || 0;
         var gasten = parseInt(document.getElementById(meal + 'Gasten').value) || 0;
         var omzet = parseFloat(document.getElementById(meal + 'Omzet').value) || 0;
@@ -923,6 +949,20 @@
 
     function skipMeal(meal) {
         data[meal] = { active: false, dagen: 0, gasten: 0, omzet: 0 };
+        goNext();
+    }
+
+    /* ======== STAP 8: AANBOD ======== */
+    function submitAanbod() {
+        var ids = ['lunchGerechten', 'lunchGangen', 'dinerGerechten', 'dinerGangen', 'banqueting'];
+        if (!validateFields(ids, 'aanbodError')) return;
+        goNext();
+    }
+
+    /* ======== STAP 9: KOSTEN ======== */
+    function submitKosten() {
+        var ids = ['brutomarge', 'aantalKoks', 'loonsom', 'foodomzet', 'inkoop', 'leveranciers', 'leveringen'];
+        if (!validateFields(ids, 'kostenError')) return;
         goNext();
     }
 
@@ -940,12 +980,20 @@
 
     /* ======== STAP 12: DIENSTVERBAND ======== */
     function pickDienstverband(val, btn) {
-        // Deselect all
         btn.parentElement.querySelectorAll('.option-btn').forEach(function(b) {
             b.classList.remove('selected');
         });
         btn.classList.add('selected');
         data.dienstverband = val;
+        document.getElementById('teamError').style.display = 'none';
+    }
+
+    function submitTeam() {
+        if (!data.dienstverband) {
+            document.getElementById('teamError').style.display = 'block';
+            return;
+        }
+        goNext();
     }
 
     /* ======== STAP 13: EMAIL & SUBMIT ======== */
