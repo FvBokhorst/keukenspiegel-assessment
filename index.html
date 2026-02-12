@@ -102,17 +102,12 @@
             padding-top: var(--space-md);
         }
         .brand-logo {
-            max-width: 200px; height: auto; margin-bottom: var(--space-md);
-            border-radius: var(--radius-md);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            border: 1px solid rgba(239,68,68,0.1);
-        }
-        .brand-title {
-            font-family: var(--font-primary);
-            font-size: 1.8rem; font-weight: 700;
-            background: linear-gradient(135deg, var(--color-teal-light), var(--color-cyan), var(--color-silver-light));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            background-clip: text; margin-bottom: var(--space-sm);
+            max-width: 260px; height: auto; margin-bottom: var(--space-md);
+            border-radius: var(--radius-lg);
+            border: none;
+            box-shadow: 0 0 40px rgba(239,68,68,0.25), 0 0 80px rgba(248,113,113,0.1);
+            mask-image: radial-gradient(ellipse 90% 80% at center, black 60%, transparent 100%);
+            -webkit-mask-image: radial-gradient(ellipse 90% 80% at center, black 60%, transparent 100%);
         }
         .subtitle {
             color: var(--text-secondary); font-size: 0.9rem;
@@ -431,7 +426,6 @@
 
     <div class="header" id="quizHeader">
         <img src="logo.png" alt="SmartCuisine Logo" class="brand-logo" onerror="this.style.display='none'">
-        <div class="brand-title">SmartCuisine</div>
         <p class="subtitle" id="stepSubtitle">Keukenspiegel – Professionele Keuken Assessment</p>
     </div>
 
