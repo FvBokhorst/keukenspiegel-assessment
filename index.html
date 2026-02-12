@@ -447,7 +447,7 @@
                 <input type="text" id="nawPlaats" class="input-field" placeholder="Amsterdam">
             </div>
         </div>
-        <div id="nawError" class="error-msg">Vul minimaal bedrijfsnaam en contactpersoon in.</div>
+        <div id="nawError" class="error-msg">Vul alle velden in om door te gaan.</div>
         <button class="action-btn" onclick="submitNaw()">Volgende</button>
     </div>
 
@@ -867,15 +867,28 @@
     function submitNaw() {
         var bedrijf = document.getElementById('nawBedrijf').value.trim();
         var contact = document.getElementById('nawContact').value.trim();
-        if (!bedrijf || !contact) {
-            document.getElementById('nawError').style.display = 'block';
+        var telefoon = document.getElementById('nawTelefoon').value.trim();
+        var plaats = document.getElementById('nawPlaats').value.trim();
+        var nawError = document.getElementById('nawError');
+
+        if (!bedrijf || !contact || !telefoon || !plaats) {
+            nawError.style.display = 'block';
+            // Highlight empty fields
+            document.getElementById('nawBedrijf').style.borderColor = bedrijf ? 'var(--glass-border)' : '#ef4444';
+            document.getElementById('nawContact').style.borderColor = contact ? 'var(--glass-border)' : '#ef4444';
+            document.getElementById('nawTelefoon').style.borderColor = telefoon ? 'var(--glass-border)' : '#ef4444';
+            document.getElementById('nawPlaats').style.borderColor = plaats ? 'var(--glass-border)' : '#ef4444';
             return;
         }
-        document.getElementById('nawError').style.display = 'none';
+        nawError.style.display = 'none';
+        document.getElementById('nawBedrijf').style.borderColor = 'var(--glass-border)';
+        document.getElementById('nawContact').style.borderColor = 'var(--glass-border)';
+        document.getElementById('nawTelefoon').style.borderColor = 'var(--glass-border)';
+        document.getElementById('nawPlaats').style.borderColor = 'var(--glass-border)';
         data.bedrijf = bedrijf;
         data.contact = contact;
-        data.telefoon = document.getElementById('nawTelefoon').value.trim();
-        data.plaats = document.getElementById('nawPlaats').value.trim();
+        data.telefoon = telefoon;
+        data.plaats = plaats;
         goNext();
     }
 
