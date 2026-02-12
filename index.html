@@ -1462,11 +1462,16 @@
         if (!s) return;
 
         var pw = 210; // page width
+        var ph = 297; // page height
         var cx = pw / 2; // center x
         var y = 20;
 
-        // --- Header: dark bar ---
+        // --- Full page dark background (#0c0a09) ---
         doc.setFillColor(12, 10, 9);
+        doc.rect(0, 0, pw, ph, 'F');
+
+        // --- Header: darker bar ---
+        doc.setFillColor(0, 0, 0);
         doc.rect(0, 0, pw, 50, 'F');
 
         // Title
@@ -1543,8 +1548,8 @@
             doc.setTextColor(168, 162, 158);
             doc.text(cat.label, barX - 2, y, { align: 'right' });
 
-            // Bar background
-            doc.setFillColor(50, 50, 50);
+            // Bar background (#292524)
+            doc.setFillColor(41, 37, 36);
             doc.roundedRect(barX + 2, y - 3, barW, 5, 2, 2, 'F');
 
             // Bar fill
@@ -1563,9 +1568,9 @@
 
         y += 8;
 
-        // --- Separator ---
-        doc.setDrawColor(60, 60, 60);
-        doc.setLineWidth(0.3);
+        // --- Separator (glass-border color) ---
+        doc.setDrawColor(197, 48, 48);
+        doc.setLineWidth(0.2);
         doc.line(30, y, 180, y);
         y += 12;
 
@@ -1593,8 +1598,8 @@
             url: 'https://www.smartcuisine.nl/'
         });
 
-        // --- Footer bar ---
-        doc.setFillColor(12, 10, 9);
+        // --- Footer bar (pure black like header) ---
+        doc.setFillColor(0, 0, 0);
         doc.rect(0, 280, pw, 17, 'F');
         doc.setFontSize(8);
         doc.setTextColor(120, 113, 108);
