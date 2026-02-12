@@ -393,6 +393,24 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+        .lang-toggle {
+            position: absolute; top: var(--space-lg); right: var(--space-lg);
+            display: flex; gap: 2px; z-index: 10;
+        }
+        .lang-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
+            color: var(--text-muted); padding: 4px 10px;
+            font-family: var(--font-secondary); font-size: 0.75rem;
+            cursor: pointer; transition: all var(--transition-base);
+            text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;
+        }
+        .lang-btn:first-child { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+        .lang-btn:last-child { border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+        .lang-btn.active {
+            background: var(--gradient-primary); border-color: var(--color-teal);
+            color: var(--color-white);
+        }
+
         .hidden { display: none !important; }
 
         @media (max-width: 480px) {
@@ -407,6 +425,11 @@
 <body>
 
 <div class="quiz-container">
+    <div class="lang-toggle">
+        <button class="lang-btn active" id="langNL" onclick="setLang('nl')">NL</button>
+        <button class="lang-btn" id="langEN" onclick="setLang('en')">EN</button>
+    </div>
+
     <div class="progress-container">
         <div class="progress-bar" id="progressBar"></div>
     </div>
@@ -419,330 +442,330 @@
 
     <!-- ============ STAP 1: WELKOM ============ -->
     <div class="step active" id="step-1">
-        <h2 class="question-title">Ontdek het potentieel van uw keuken</h2>
-        <p class="question-desc">
+        <h2 class="question-title" data-t="s1_title">Ontdek het potentieel van uw keuken</h2>
+        <p class="question-desc" data-t="s1_desc">
             Beantwoord een aantal vragen over uw keukenoperatie en ontvang direct uw Keukenspiegel Score met concrete verbeterpunten.
         </p>
-        <button class="action-btn" onclick="goNext()">Start Assessment</button>
+        <button class="action-btn" onclick="goNext()" data-t="s1_btn">Start Assessment</button>
     </div>
 
     <!-- ============ STAP 2: NAW ============ -->
     <div class="step" id="step-2">
-        <h2 class="question-title">Uw gegevens</h2>
+        <h2 class="question-title" data-t="s2_title">Uw gegevens</h2>
         <div class="input-group">
-            <label class="input-label">Naam bedrijf</label>
-            <input type="text" id="nawBedrijf" class="input-field" placeholder="Bijv. Restaurant De Gouden Leeuw">
+            <label class="input-label" data-t="lbl_bedrijf">Naam bedrijf</label>
+            <input type="text" id="nawBedrijf" class="input-field" data-ph="ph_bedrijf" placeholder="Bijv. Restaurant De Gouden Leeuw">
         </div>
         <div class="input-group">
-            <label class="input-label">Contactpersoon</label>
-            <input type="text" id="nawContact" class="input-field" placeholder="Uw naam">
+            <label class="input-label" data-t="lbl_contact">Contactpersoon</label>
+            <input type="text" id="nawContact" class="input-field" data-ph="ph_contact" placeholder="Uw naam">
         </div>
         <div class="input-row">
             <div class="input-group">
-                <label class="input-label">Telefoonnummer</label>
-                <input type="tel" id="nawTelefoon" class="input-field" placeholder="06-12345678">
+                <label class="input-label" data-t="lbl_telefoon">Telefoonnummer</label>
+                <input type="tel" id="nawTelefoon" class="input-field" data-ph="ph_telefoon" placeholder="06-12345678">
             </div>
             <div class="input-group">
-                <label class="input-label">Plaats</label>
-                <input type="text" id="nawPlaats" class="input-field" placeholder="Amsterdam">
+                <label class="input-label" data-t="lbl_plaats">Plaats</label>
+                <input type="text" id="nawPlaats" class="input-field" data-ph="ph_plaats" placeholder="Amsterdam">
             </div>
         </div>
-        <div id="nawError" class="error-msg">Vul alle velden in om door te gaan.</div>
-        <button class="action-btn" onclick="submitNaw()">Volgende</button>
+        <div id="nawError" class="error-msg" data-t="err_naw">Vul alle velden in om door te gaan.</div>
+        <button class="action-btn" onclick="submitNaw()" data-t="btn_volgende">Volgende</button>
     </div>
 
     <!-- ============ STAP 3: TYPE RESTAURANT ============ -->
     <div class="step" id="step-3">
-        <h2 class="question-title">Wat voor type restaurant heeft u?</h2>
+        <h2 class="question-title" data-t="s3_title">Wat voor type restaurant heeft u?</h2>
         <div class="options-grid">
-            <button class="option-btn" onclick="pickOption('type','Eetcafé')">Eetcafé <span style="color:var(--text-muted)">→</span></button>
-            <button class="option-btn" onclick="pickOption('type','Brasserie')">Brasserie <span style="color:var(--text-muted)">→</span></button>
-            <button class="option-btn" onclick="pickOption('type','Restaurant (à la carte)')">Restaurant (à la carte) <span style="color:var(--text-muted)">→</span></button>
-            <button class="option-btn" onclick="pickOption('type','Fine dining / gastronomisch')">Fine dining / gastronomisch <span style="color:var(--text-muted)">→</span></button>
-            <button class="option-btn" onclick="pickOption('type','Afhaal- en bezorgrestaurant')">Afhaal- en bezorgrestaurant <span style="color:var(--text-muted)">→</span></button>
-            <button class="option-btn" onclick="pickOption('type','Fastfood / QSR')">Fastfood / QSR <span style="color:var(--text-muted)">→</span></button>
-            <button class="option-btn" onclick="pickOption('type','Internationaal / themarestaurant')">Internationaal / themarestaurant <span style="color:var(--text-muted)">→</span></button>
-            <button class="option-btn" onclick="pickOption('type','Lunchroom / koffiezaak')">Lunchroom / koffiezaak <span style="color:var(--text-muted)">→</span></button>
-            <button class="option-btn" onclick="pickOption('type','Grand café')">Grand café <span style="color:var(--text-muted)">→</span></button>
-            <button class="option-btn" onclick="pickOption('type','Hotelrestaurant')">Hotelrestaurant <span style="color:var(--text-muted)">→</span></button>
-            <button class="option-btn" onclick="showOther('type')">Anders <span style="color:var(--text-muted)">→</span></button>
+            <button class="option-btn" onclick="pickOption('type','Eetcafé')"><span data-t="type_eetcafe">Eetcafé</span> <span style="color:var(--text-muted)">→</span></button>
+            <button class="option-btn" onclick="pickOption('type','Brasserie')"><span data-t="type_brasserie">Brasserie</span> <span style="color:var(--text-muted)">→</span></button>
+            <button class="option-btn" onclick="pickOption('type','Restaurant (à la carte)')"><span data-t="type_alacarte">Restaurant (à la carte)</span> <span style="color:var(--text-muted)">→</span></button>
+            <button class="option-btn" onclick="pickOption('type','Fine dining / gastronomisch')"><span data-t="type_finedining">Fine dining / gastronomisch</span> <span style="color:var(--text-muted)">→</span></button>
+            <button class="option-btn" onclick="pickOption('type','Afhaal- en bezorgrestaurant')"><span data-t="type_afhaal">Afhaal- en bezorgrestaurant</span> <span style="color:var(--text-muted)">→</span></button>
+            <button class="option-btn" onclick="pickOption('type','Fastfood / QSR')"><span data-t="type_fastfood">Fastfood / QSR</span> <span style="color:var(--text-muted)">→</span></button>
+            <button class="option-btn" onclick="pickOption('type','Internationaal / themarestaurant')"><span data-t="type_internationaal">Internationaal / themarestaurant</span> <span style="color:var(--text-muted)">→</span></button>
+            <button class="option-btn" onclick="pickOption('type','Lunchroom / koffiezaak')"><span data-t="type_lunchroom">Lunchroom / koffiezaak</span> <span style="color:var(--text-muted)">→</span></button>
+            <button class="option-btn" onclick="pickOption('type','Grand café')"><span data-t="type_grandcafe">Grand café</span> <span style="color:var(--text-muted)">→</span></button>
+            <button class="option-btn" onclick="pickOption('type','Hotelrestaurant')"><span data-t="type_hotel">Hotelrestaurant</span> <span style="color:var(--text-muted)">→</span></button>
+            <button class="option-btn" onclick="showOther('type')"><span data-t="type_anders">Anders</span> <span style="color:var(--text-muted)">→</span></button>
         </div>
         <div id="otherType" class="other-container hidden">
-            <input type="text" id="otherTypeInput" class="input-field" placeholder="Specificeer uw type restaurant...">
-            <button class="action-btn" onclick="confirmOther('type')">Volgende</button>
+            <input type="text" id="otherTypeInput" class="input-field" data-ph="ph_anders" placeholder="Specificeer uw type restaurant...">
+            <button class="action-btn" onclick="confirmOther('type')" data-t="btn_volgende">Volgende</button>
         </div>
     </div>
 
     <!-- ============ STAP 4: ONTBIJT ============ -->
     <div class="step" id="step-4">
-        <h2 class="question-title">Ontbijt – Serveermomenten</h2>
-        <p class="question-desc">Vul de gegevens in over uw ontbijtservice.</p>
+        <h2 class="question-title" data-t="s4_title">Ontbijt – Serveermomenten</h2>
+        <p class="question-desc" data-t="s4_desc">Vul de gegevens in over uw ontbijtservice.</p>
         <div class="input-row-3">
             <div class="input-group">
-                <label class="input-label">Dagen per week</label>
-                <input type="number" id="ontbijtDagen" class="input-field" min="0" max="7" placeholder="0-7">
+                <label class="input-label" data-t="lbl_dagen">Dagen per week</label>
+                <input type="number" id="ontbijtDagen" class="input-field" data-ph="ph_dagen" min="0" max="7" placeholder="0-7">
             </div>
             <div class="input-group">
-                <label class="input-label">Gasten per dag</label>
-                <input type="number" id="ontbijtGasten" class="input-field" min="0" placeholder="Gem.">
+                <label class="input-label" data-t="lbl_gasten">Gasten per dag</label>
+                <input type="number" id="ontbijtGasten" class="input-field" data-ph="ph_gasten" min="0" placeholder="Gem.">
             </div>
             <div class="input-group">
-                <label class="input-label">Omzet per gast (€)</label>
-                <input type="number" id="ontbijtOmzet" class="input-field" min="0" step="0.50" placeholder="Incl. BTW">
+                <label class="input-label" data-t="lbl_omzet_gast">Omzet per gast (€)</label>
+                <input type="number" id="ontbijtOmzet" class="input-field" data-ph="ph_omzet" min="0" step="0.50" placeholder="Incl. BTW">
             </div>
         </div>
-        <div id="ontbijtError" class="error-msg">Vul alle velden in om door te gaan.</div>
-        <button class="action-btn" onclick="submitMeal('ontbijt')">Volgende</button>
-        <button class="skip-btn" onclick="skipMeal('ontbijt')">Wij serveren geen ontbijt – overslaan</button>
+        <div id="ontbijtError" class="error-msg" data-t="err_meal">Vul alle velden in om door te gaan.</div>
+        <button class="action-btn" onclick="submitMeal('ontbijt')" data-t="btn_volgende">Volgende</button>
+        <button class="skip-btn" onclick="skipMeal('ontbijt')" data-t="skip_ontbijt">Wij serveren geen ontbijt – overslaan</button>
     </div>
 
     <!-- ============ STAP 5: LUNCH ============ -->
     <div class="step" id="step-5">
-        <h2 class="question-title">Lunch – Serveermomenten</h2>
-        <p class="question-desc">Vul de gegevens in over uw lunchservice.</p>
+        <h2 class="question-title" data-t="s5_title">Lunch – Serveermomenten</h2>
+        <p class="question-desc" data-t="s5_desc">Vul de gegevens in over uw lunchservice.</p>
         <div class="input-row-3">
             <div class="input-group">
-                <label class="input-label">Dagen per week</label>
-                <input type="number" id="lunchDagen" class="input-field" min="0" max="7" placeholder="0-7">
+                <label class="input-label" data-t="lbl_dagen">Dagen per week</label>
+                <input type="number" id="lunchDagen" class="input-field" data-ph="ph_dagen" min="0" max="7" placeholder="0-7">
             </div>
             <div class="input-group">
-                <label class="input-label">Gasten per dag</label>
-                <input type="number" id="lunchGasten" class="input-field" min="0" placeholder="Gem.">
+                <label class="input-label" data-t="lbl_gasten">Gasten per dag</label>
+                <input type="number" id="lunchGasten" class="input-field" data-ph="ph_gasten" min="0" placeholder="Gem.">
             </div>
             <div class="input-group">
-                <label class="input-label">Omzet per gast (€)</label>
-                <input type="number" id="lunchOmzet" class="input-field" min="0" step="0.50" placeholder="Incl. BTW">
+                <label class="input-label" data-t="lbl_omzet_gast">Omzet per gast (€)</label>
+                <input type="number" id="lunchOmzet" class="input-field" data-ph="ph_omzet" min="0" step="0.50" placeholder="Incl. BTW">
             </div>
         </div>
-        <div id="lunchError" class="error-msg">Vul alle velden in om door te gaan.</div>
-        <button class="action-btn" onclick="submitMeal('lunch')">Volgende</button>
-        <button class="skip-btn" onclick="skipMeal('lunch')">Wij serveren geen lunch – overslaan</button>
+        <div id="lunchError" class="error-msg" data-t="err_meal">Vul alle velden in om door te gaan.</div>
+        <button class="action-btn" onclick="submitMeal('lunch')" data-t="btn_volgende">Volgende</button>
+        <button class="skip-btn" onclick="skipMeal('lunch')" data-t="skip_lunch">Wij serveren geen lunch – overslaan</button>
     </div>
 
     <!-- ============ STAP 6: DINER ============ -->
     <div class="step" id="step-6">
-        <h2 class="question-title">Diner – Serveermomenten</h2>
-        <p class="question-desc">Vul de gegevens in over uw dinerservice.</p>
+        <h2 class="question-title" data-t="s6_title">Diner – Serveermomenten</h2>
+        <p class="question-desc" data-t="s6_desc">Vul de gegevens in over uw dinerservice.</p>
         <div class="input-row-3">
             <div class="input-group">
-                <label class="input-label">Dagen per week</label>
-                <input type="number" id="dinerDagen" class="input-field" min="0" max="7" placeholder="0-7">
+                <label class="input-label" data-t="lbl_dagen">Dagen per week</label>
+                <input type="number" id="dinerDagen" class="input-field" data-ph="ph_dagen" min="0" max="7" placeholder="0-7">
             </div>
             <div class="input-group">
-                <label class="input-label">Gasten per dag</label>
-                <input type="number" id="dinerGasten" class="input-field" min="0" placeholder="Gem.">
+                <label class="input-label" data-t="lbl_gasten">Gasten per dag</label>
+                <input type="number" id="dinerGasten" class="input-field" data-ph="ph_gasten" min="0" placeholder="Gem.">
             </div>
             <div class="input-group">
-                <label class="input-label">Omzet per gast (€)</label>
-                <input type="number" id="dinerOmzet" class="input-field" min="0" step="0.50" placeholder="Incl. BTW">
+                <label class="input-label" data-t="lbl_omzet_gast">Omzet per gast (€)</label>
+                <input type="number" id="dinerOmzet" class="input-field" data-ph="ph_omzet" min="0" step="0.50" placeholder="Incl. BTW">
             </div>
         </div>
-        <div id="dinerError" class="error-msg">Vul alle velden in om door te gaan.</div>
-        <button class="action-btn" onclick="submitMeal('diner')">Volgende</button>
-        <button class="skip-btn" onclick="skipMeal('diner')">Wij serveren geen diner – overslaan</button>
+        <div id="dinerError" class="error-msg" data-t="err_meal">Vul alle velden in om door te gaan.</div>
+        <button class="action-btn" onclick="submitMeal('diner')" data-t="btn_volgende">Volgende</button>
+        <button class="skip-btn" onclick="skipMeal('diner')" data-t="skip_diner">Wij serveren geen diner – overslaan</button>
     </div>
 
     <!-- ============ STAP 7: AANBOD ONTBIJT ============ -->
     <div class="step" id="step-7">
-        <h2 class="question-title">Wat biedt u aan bij het ontbijt?</h2>
+        <h2 class="question-title" data-t="s7_title">Wat biedt u aan bij het ontbijt?</h2>
         <div class="options-grid">
-            <button class="option-btn" onclick="pickOption('ontbijtType','Ontbijtbuffet')">Ontbijtbuffet <span style="color:var(--text-muted)">→</span></button>
-            <button class="option-btn" onclick="pickOption('ontbijtType','Fixed ontbijt')">Fixed ontbijt <span style="color:var(--text-muted)">→</span></button>
-            <button class="option-btn" onclick="pickOption('ontbijtType','À la carte ontbijt')">À la carte ontbijt <span style="color:var(--text-muted)">→</span></button>
+            <button class="option-btn" onclick="pickOption('ontbijtType','Ontbijtbuffet')"><span data-t="ontbijt_buffet">Ontbijtbuffet</span> <span style="color:var(--text-muted)">→</span></button>
+            <button class="option-btn" onclick="pickOption('ontbijtType','Fixed ontbijt')"><span data-t="ontbijt_fixed">Fixed ontbijt</span> <span style="color:var(--text-muted)">→</span></button>
+            <button class="option-btn" onclick="pickOption('ontbijtType','À la carte ontbijt')"><span data-t="ontbijt_alacarte">À la carte ontbijt</span> <span style="color:var(--text-muted)">→</span></button>
         </div>
     </div>
 
     <!-- ============ STAP 8: AANBOD LUNCH & DINER ============ -->
     <div class="step" id="step-8">
-        <h2 class="question-title">Aanbod – Lunch & Diner</h2>
-        <p class="question-desc">Geef een indicatie van uw menusamenstelling.</p>
+        <h2 class="question-title" data-t="s8_title">Aanbod – Lunch & Diner</h2>
+        <p class="question-desc" data-t="s8_desc">Geef een indicatie van uw menusamenstelling.</p>
 
-        <p style="color:var(--color-cyan);font-weight:600;margin-bottom:var(--space-sm);font-size:0.9rem;">LUNCH</p>
+        <p style="color:var(--color-cyan);font-weight:600;margin-bottom:var(--space-sm);font-size:0.9rem;" data-t="lbl_lunch_header">LUNCH</p>
         <div class="input-row">
             <div class="input-group">
-                <label class="input-label">Aantal à la carte gerechten</label>
+                <label class="input-label" data-t="lbl_gerechten">Aantal à la carte gerechten</label>
                 <input type="number" id="lunchGerechten" class="input-field" min="0" placeholder="0">
             </div>
             <div class="input-group">
-                <label class="input-label">Aantal gangen lunchmenu</label>
+                <label class="input-label" data-t="lbl_gangen_lunch">Aantal gangen lunchmenu</label>
                 <input type="number" id="lunchGangen" class="input-field" min="0" max="10" placeholder="0-10">
             </div>
         </div>
 
-        <p style="color:var(--color-cyan);font-weight:600;margin:var(--space-lg) 0 var(--space-sm);font-size:0.9rem;">DINER</p>
+        <p style="color:var(--color-cyan);font-weight:600;margin:var(--space-lg) 0 var(--space-sm);font-size:0.9rem;" data-t="lbl_diner_header">DINER</p>
         <div class="input-row">
             <div class="input-group">
-                <label class="input-label">Aantal à la carte gerechten</label>
+                <label class="input-label" data-t="lbl_gerechten">Aantal à la carte gerechten</label>
                 <input type="number" id="dinerGerechten" class="input-field" min="0" placeholder="0">
             </div>
             <div class="input-group">
-                <label class="input-label">Aantal gangen dinermenu</label>
+                <label class="input-label" data-t="lbl_gangen_diner">Aantal gangen dinermenu</label>
                 <input type="number" id="dinerGangen" class="input-field" min="0" max="10" placeholder="0-10">
             </div>
         </div>
 
-        <p style="color:var(--color-cyan);font-weight:600;margin:var(--space-lg) 0 var(--space-sm);font-size:0.9rem;">BANQUETING</p>
+        <p style="color:var(--color-cyan);font-weight:600;margin:var(--space-lg) 0 var(--space-sm);font-size:0.9rem;" data-t="lbl_banqueting_header">BANQUETING</p>
         <div class="input-group">
-            <label class="input-label">Aantal banquetingmenu's</label>
+            <label class="input-label" data-t="lbl_banqueting">Aantal banquetingmenu's</label>
             <input type="number" id="banqueting" class="input-field" min="0" placeholder="0" style="max-width:200px;">
         </div>
 
-        <div id="aanbodError" class="error-msg">Vul alle velden in om door te gaan.</div>
-        <button class="action-btn" onclick="submitAanbod()">Volgende</button>
+        <div id="aanbodError" class="error-msg" data-t="err_aanbod">Vul alle velden in om door te gaan.</div>
+        <button class="action-btn" onclick="submitAanbod()" data-t="btn_volgende">Volgende</button>
     </div>
 
     <!-- ============ STAP 9: VARIABELE KOSTEN ============ -->
     <div class="step" id="step-9">
-        <h2 class="question-title">Inzicht in variabele kosten</h2>
+        <h2 class="question-title" data-t="s9_title">Inzicht in variabele kosten</h2>
         <div class="input-row">
             <div class="input-group">
-                <label class="input-label">Gem. brutomarge keukenproduct (%)</label>
-                <input type="number" id="brutomarge" class="input-field" min="0" max="100" placeholder="Bijv. 70">
+                <label class="input-label" data-t="lbl_brutomarge">Gem. brutomarge keukenproduct (%)</label>
+                <input type="number" id="brutomarge" class="input-field" data-ph="ph_marge" min="0" max="100" placeholder="Bijv. 70">
             </div>
             <div class="input-group">
-                <label class="input-label">Aantal koks (FTE)</label>
-                <input type="number" id="aantalKoks" class="input-field" min="0" step="0.5" placeholder="Bijv. 3">
+                <label class="input-label" data-t="lbl_koks">Aantal koks (FTE)</label>
+                <input type="number" id="aantalKoks" class="input-field" data-ph="ph_koks" min="0" step="0.5" placeholder="Bijv. 3">
             </div>
         </div>
         <div class="input-group">
-            <label class="input-label">Totale loonsom keuken per jaar (€)</label>
-            <input type="number" id="loonsom" class="input-field" min="0" placeholder="Bijv. 150000">
+            <label class="input-label" data-t="lbl_loonsom">Totale loonsom keuken per jaar (€)</label>
+            <input type="number" id="loonsom" class="input-field" data-ph="ph_loonsom" min="0" placeholder="Bijv. 150000">
         </div>
         <div class="input-row">
             <div class="input-group">
-                <label class="input-label">Totale foodomzet per jaar (€)</label>
-                <input type="number" id="foodomzet" class="input-field" min="0" placeholder="Bijv. 500000">
+                <label class="input-label" data-t="lbl_foodomzet">Totale foodomzet per jaar (€)</label>
+                <input type="number" id="foodomzet" class="input-field" data-ph="ph_foodomzet" min="0" placeholder="Bijv. 500000">
             </div>
             <div class="input-group">
-                <label class="input-label">Inkoopwaarde food per jaar (€)</label>
-                <input type="number" id="inkoop" class="input-field" min="0" placeholder="Bijv. 150000">
+                <label class="input-label" data-t="lbl_inkoop">Inkoopwaarde food per jaar (€)</label>
+                <input type="number" id="inkoop" class="input-field" data-ph="ph_inkoop" min="0" placeholder="Bijv. 150000">
             </div>
         </div>
         <div class="input-row">
             <div class="input-group">
-                <label class="input-label">Aantal leveranciers</label>
-                <input type="number" id="leveranciers" class="input-field" min="0" placeholder="Bijv. 8">
+                <label class="input-label" data-t="lbl_leveranciers">Aantal leveranciers</label>
+                <input type="number" id="leveranciers" class="input-field" data-ph="ph_leveranciers" min="0" placeholder="Bijv. 8">
             </div>
             <div class="input-group">
-                <label class="input-label">Leveringen per week</label>
-                <input type="number" id="leveringen" class="input-field" min="0" placeholder="Bijv. 5">
+                <label class="input-label" data-t="lbl_leveringen">Leveringen per week</label>
+                <input type="number" id="leveringen" class="input-field" data-ph="ph_leveringen" min="0" placeholder="Bijv. 5">
             </div>
         </div>
-        <div id="kostenError" class="error-msg">Vul alle velden in om door te gaan.</div>
-        <button class="action-btn" onclick="submitKosten()">Volgende</button>
+        <div id="kostenError" class="error-msg" data-t="err_kosten">Vul alle velden in om door te gaan.</div>
+        <button class="action-btn" onclick="submitKosten()" data-t="btn_volgende">Volgende</button>
     </div>
 
     <!-- ============ STAP 10: SYSTEMATIEK ============ -->
     <div class="step" id="step-10">
-        <h2 class="question-title">Systematiek & Procedures</h2>
-        <p class="question-desc">Welke van de volgende zaken heeft u geregeld?</p>
+        <h2 class="question-title" data-t="s10_title">Systematiek & Procedures</h2>
+        <p class="question-desc" data-t="s10_desc">Welke van de volgende zaken heeft u geregeld?</p>
         <div class="checkbox-grid">
             <button class="checkbox-btn" onclick="toggleCheck(this,'recepturen')">
                 <span class="check-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
-                Recepturen vastgelegd
+                <span data-t="chk_recepturen">Recepturen vastgelegd</span>
             </button>
             <button class="checkbox-btn" onclick="toggleCheck(this,'gecalculeerd')">
                 <span class="check-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
-                Alle gerechten zijn gecalculeerd
+                <span data-t="chk_gecalculeerd">Alle gerechten zijn gecalculeerd</span>
             </button>
             <button class="checkbox-btn" onclick="toggleCheck(this,'miseenplace')">
                 <span class="check-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
-                Mise en place gepland o.b.v. prognose
+                <span data-t="chk_miseenplace">Mise en place gepland o.b.v. prognose</span>
             </button>
             <button class="checkbox-btn" onclick="toggleCheck(this,'haccp')">
                 <span class="check-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
-                HACCP-plan of digitaal systeem aanwezig
+                <span data-t="chk_haccp">HACCP-plan of digitaal systeem aanwezig</span>
             </button>
             <button class="checkbox-btn" onclick="toggleCheck(this,'kassasysteem')">
                 <span class="check-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
-                Geïntegreerd F&B kassasysteem
+                <span data-t="chk_kassasysteem">Geïntegreerd F&B kassasysteem</span>
             </button>
         </div>
-        <button class="action-btn" onclick="goNext()">Volgende</button>
+        <button class="action-btn" onclick="goNext()" data-t="btn_volgende">Volgende</button>
     </div>
 
     <!-- ============ STAP 11: GASTTEVREDENHEID ============ -->
     <div class="step" id="step-11">
-        <h2 class="question-title">Gasttevredenheid</h2>
-        <p class="question-desc">Beoordeel de volgende aspecten op een schaal van 1 tot 10.</p>
+        <h2 class="question-title" data-t="s11_title">Gasttevredenheid</h2>
+        <p class="question-desc" data-t="s11_desc">Beoordeel de volgende aspecten op een schaal van 1 tot 10.</p>
 
         <div class="slider-group">
             <div class="slider-header">
-                <span class="slider-label">Kwaliteit gerechten</span>
+                <span class="slider-label" data-t="lbl_kwaliteit">Kwaliteit gerechten</span>
                 <span class="slider-value" id="val-kwaliteit">5</span>
             </div>
             <input type="range" min="1" max="10" value="5" oninput="updateSlider('kwaliteit',this.value)">
         </div>
         <div class="slider-group">
             <div class="slider-header">
-                <span class="slider-label">Continuïteit van het aanbod</span>
+                <span class="slider-label" data-t="lbl_continuiteit">Continuïteit van het aanbod</span>
                 <span class="slider-value" id="val-continuiteit">5</span>
             </div>
             <input type="range" min="1" max="10" value="5" oninput="updateSlider('continuiteit',this.value)">
         </div>
         <div class="slider-group">
             <div class="slider-header">
-                <span class="slider-label">Keuze van menuitems</span>
+                <span class="slider-label" data-t="lbl_keuze">Keuze van menuitems</span>
                 <span class="slider-value" id="val-keuze">5</span>
             </div>
             <input type="range" min="1" max="10" value="5" oninput="updateSlider('keuze',this.value)">
         </div>
         <div class="slider-group">
             <div class="slider-header">
-                <span class="slider-label">Snelheid van serveren</span>
+                <span class="slider-label" data-t="lbl_snelheid">Snelheid van serveren</span>
                 <span class="slider-value" id="val-snelheid">5</span>
             </div>
             <input type="range" min="1" max="10" value="5" oninput="updateSlider('snelheid',this.value)">
         </div>
-        <button class="action-btn" onclick="goNext()">Volgende</button>
+        <button class="action-btn" onclick="goNext()" data-t="btn_volgende">Volgende</button>
     </div>
 
     <!-- ============ STAP 12: KEUKENTEAM ============ -->
     <div class="step" id="step-12">
-        <h2 class="question-title">Keukenteam</h2>
+        <h2 class="question-title" data-t="s12_title">Keukenteam</h2>
 
         <div class="slider-group">
             <div class="slider-header">
-                <span class="slider-label">Tevredenheid keukenteam</span>
+                <span class="slider-label" data-t="lbl_teamtevredenheid">Tevredenheid keukenteam</span>
                 <span class="slider-value" id="val-teamtevredenheid">5</span>
             </div>
             <input type="range" min="1" max="10" value="5" oninput="updateSlider('teamtevredenheid',this.value)">
         </div>
         <div class="slider-group">
             <div class="slider-header">
-                <span class="slider-label">Samenwerking keuken & bediening</span>
+                <span class="slider-label" data-t="lbl_samenwerking">Samenwerking keuken & bediening</span>
                 <span class="slider-value" id="val-samenwerking">5</span>
             </div>
             <input type="range" min="1" max="10" value="5" oninput="updateSlider('samenwerking',this.value)">
         </div>
         <div class="slider-group">
             <div class="slider-header">
-                <span class="slider-label">Kennis van wensen van de gast</span>
+                <span class="slider-label" data-t="lbl_gastkennis">Kennis van wensen van de gast</span>
                 <span class="slider-value" id="val-gastkennis">5</span>
             </div>
             <input type="range" min="1" max="10" value="5" oninput="updateSlider('gastkennis',this.value)">
         </div>
 
-        <p style="color:var(--text-secondary);font-size:0.9rem;margin:var(--space-md) 0 var(--space-sm);">Hoe lang blijven koks gemiddeld in dienst?</p>
+        <p style="color:var(--text-secondary);font-size:0.9rem;margin:var(--space-md) 0 var(--space-sm);" data-t="lbl_dienstverband">Hoe lang blijven koks gemiddeld in dienst?</p>
         <div class="options-grid">
-            <button class="option-btn" onclick="pickDienstverband('< 6 maanden',this)">Minder dan 6 maanden</button>
-            <button class="option-btn" onclick="pickDienstverband('6-12 maanden',this)">6 – 12 maanden</button>
-            <button class="option-btn" onclick="pickDienstverband('1-2 jaar',this)">1 – 2 jaar</button>
-            <button class="option-btn" onclick="pickDienstverband('> 2 jaar',this)">Meer dan 2 jaar</button>
+            <button class="option-btn" onclick="pickDienstverband('< 6 maanden',this)"><span data-t="dv_6m">Minder dan 6 maanden</span></button>
+            <button class="option-btn" onclick="pickDienstverband('6-12 maanden',this)"><span data-t="dv_12m">6 – 12 maanden</span></button>
+            <button class="option-btn" onclick="pickDienstverband('1-2 jaar',this)"><span data-t="dv_2j">1 – 2 jaar</span></button>
+            <button class="option-btn" onclick="pickDienstverband('> 2 jaar',this)"><span data-t="dv_2jplus">Meer dan 2 jaar</span></button>
         </div>
-        <div id="teamError" class="error-msg">Selecteer hoe lang koks gemiddeld in dienst blijven.</div>
-        <button class="action-btn" id="teamNextBtn" onclick="submitTeam()" style="margin-top:var(--space-lg);">Volgende</button>
+        <div id="teamError" class="error-msg" data-t="err_team">Selecteer hoe lang koks gemiddeld in dienst blijven.</div>
+        <button class="action-btn" id="teamNextBtn" onclick="submitTeam()" data-t="btn_volgende" style="margin-top:var(--space-lg);">Volgende</button>
     </div>
 
     <!-- ============ STAP 13: EMAIL ============ -->
     <div class="step" id="step-13">
-        <h2 class="question-title">Waar mogen wij uw rapport naartoe sturen?</h2>
-        <p class="question-desc">Vul uw e-mailadres in om direct uw Keukenspiegel Score te ontvangen.</p>
+        <h2 class="question-title" data-t="s13_title">Waar mogen wij uw rapport naartoe sturen?</h2>
+        <p class="question-desc" data-t="s13_desc">Vul uw e-mailadres in om direct uw Keukenspiegel Score te ontvangen.</p>
         <div class="input-group">
-            <input type="email" id="emailInput" class="input-field" placeholder="naam@bedrijf.nl">
-            <div id="emailError" class="error-msg">Vul een geldig e-mailadres in.</div>
+            <input type="email" id="emailInput" class="input-field" data-ph="ph_email" placeholder="naam@bedrijf.nl">
+            <div id="emailError" class="error-msg" data-t="err_email">Vul een geldig e-mailadres in.</div>
         </div>
-        <button class="action-btn" id="submitBtn" onclick="submitEmail()">Bekijk mijn resultaten</button>
+        <button class="action-btn" id="submitBtn" onclick="submitEmail()" data-t="btn_submit">Bekijk mijn resultaten</button>
     </div>
 
     <!-- ============ STAP 14: RESULTATEN ============ -->
@@ -756,22 +779,22 @@
 
             <div class="score-breakdown">
                 <div class="score-row">
-                    <span class="score-row-label">Systematiek</span>
+                    <span class="score-row-label" data-t="lbl_systematiek">Systematiek</span>
                     <div class="score-bar-bg"><div class="score-bar-fill" id="bar-systematiek" style="width:0%"></div></div>
                     <span class="score-row-value" id="val-bar-systematiek">0</span>
                 </div>
                 <div class="score-row">
-                    <span class="score-row-label">Gasttevredenheid</span>
+                    <span class="score-row-label" data-t="lbl_gasttevredenheid">Gasttevredenheid</span>
                     <div class="score-bar-bg"><div class="score-bar-fill" id="bar-gasttevredenheid" style="width:0%"></div></div>
                     <span class="score-row-value" id="val-bar-gasttevredenheid">0</span>
                 </div>
                 <div class="score-row">
-                    <span class="score-row-label">Keukenteam</span>
+                    <span class="score-row-label" data-t="lbl_keukenteam">Keukenteam</span>
                     <div class="score-bar-bg"><div class="score-bar-fill" id="bar-keukenteam" style="width:0%"></div></div>
                     <span class="score-row-value" id="val-bar-keukenteam">0</span>
                 </div>
                 <div class="score-row">
-                    <span class="score-row-label">Efficiency</span>
+                    <span class="score-row-label" data-t="lbl_efficiency">Efficiency</span>
                     <div class="score-bar-bg"><div class="score-bar-fill" id="bar-efficiency" style="width:0%"></div></div>
                     <span class="score-row-value" id="val-bar-efficiency">0</span>
                 </div>
@@ -781,15 +804,15 @@
         <div class="upsell-box">
             <div class="upsell-header">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                Aanbeveling
+                <span data-t="upsell_header">Aanbeveling</span>
             </div>
-            <p id="upsellText" style="font-size:0.9rem;color:var(--color-silver-light);margin-bottom:var(--space-md);">
+            <p id="upsellText" style="font-size:0.9rem;color:var(--color-silver-light);margin-bottom:var(--space-md);" data-t="upsell_text">
                 Op basis van uw profiel kan Smart Cuisine uw keukenoperatie direct optimaliseren.
             </p>
-            <a href="#" class="action-btn" id="ctaLink">Neem contact op</a>
+            <a href="#" class="action-btn" id="ctaLink" data-t="btn_cta">Neem contact op</a>
         </div>
 
-        <button onclick="location.reload()" style="background:none;border:none;color:var(--text-muted);margin-top:var(--space-xl);cursor:pointer;text-decoration:underline;font-size:0.85rem;">
+        <button onclick="location.reload()" style="background:none;border:none;color:var(--text-muted);margin-top:var(--space-xl);cursor:pointer;text-decoration:underline;font-size:0.85rem;" data-t="btn_restart">
             Assessment opnieuw doen
         </button>
     </div>
@@ -818,6 +841,206 @@
         teamtevredenheid: 5, samenwerking: 5, gastkennis: 5,
         dienstverband: '',
         email: ''
+    };
+
+    let currentLang = 'nl';
+    let lastScores = null;
+
+    const T = {
+        nl: {
+            subtitle_default: 'Keukenspiegel – Professionele Keuken Assessment',
+            subtitle_last: 'Laatste stap', subtitle_result: 'Uw resultaat',
+            subtitle_step: 'Stap {n} van {total}',
+            s1_title: 'Ontdek het potentieel van uw keuken',
+            s1_desc: 'Beantwoord een aantal vragen over uw keukenoperatie en ontvang direct uw Keukenspiegel Score met concrete verbeterpunten.',
+            s1_btn: 'Start Assessment',
+            s2_title: 'Uw gegevens',
+            lbl_bedrijf: 'Naam bedrijf', lbl_contact: 'Contactpersoon',
+            lbl_telefoon: 'Telefoonnummer', lbl_plaats: 'Plaats',
+            ph_bedrijf: 'Bijv. Restaurant De Gouden Leeuw', ph_contact: 'Uw naam',
+            ph_telefoon: '06-12345678', ph_plaats: 'Amsterdam',
+            err_naw: 'Vul alle velden in om door te gaan.', btn_volgende: 'Volgende',
+            s3_title: 'Wat voor type restaurant heeft u?',
+            type_eetcafe: 'Eetcafé', type_brasserie: 'Brasserie',
+            type_alacarte: 'Restaurant (à la carte)',
+            type_finedining: 'Fine dining / gastronomisch',
+            type_afhaal: 'Afhaal- en bezorgrestaurant', type_fastfood: 'Fastfood / QSR',
+            type_internationaal: 'Internationaal / themarestaurant',
+            type_lunchroom: 'Lunchroom / koffiezaak', type_grandcafe: 'Grand café',
+            type_hotel: 'Hotelrestaurant', type_anders: 'Anders',
+            ph_anders: 'Specificeer uw type restaurant...',
+            s4_title: 'Ontbijt – Serveermomenten', s5_title: 'Lunch – Serveermomenten',
+            s6_title: 'Diner – Serveermomenten',
+            s4_desc: 'Vul de gegevens in over uw ontbijtservice.',
+            s5_desc: 'Vul de gegevens in over uw lunchservice.',
+            s6_desc: 'Vul de gegevens in over uw dinerservice.',
+            lbl_dagen: 'Dagen per week', lbl_gasten: 'Gasten per dag',
+            lbl_omzet_gast: 'Omzet per gast (€)',
+            ph_dagen: '0-7', ph_gasten: 'Gem.', ph_omzet: 'Incl. BTW',
+            err_meal: 'Vul alle velden in om door te gaan.',
+            skip_ontbijt: 'Wij serveren geen ontbijt – overslaan',
+            skip_lunch: 'Wij serveren geen lunch – overslaan',
+            skip_diner: 'Wij serveren geen diner – overslaan',
+            s7_title: 'Wat biedt u aan bij het ontbijt?',
+            ontbijt_buffet: 'Ontbijtbuffet', ontbijt_fixed: 'Fixed ontbijt',
+            ontbijt_alacarte: 'À la carte ontbijt',
+            s8_title: 'Aanbod – Lunch & Diner',
+            s8_desc: 'Geef een indicatie van uw menusamenstelling.',
+            lbl_lunch_header: 'LUNCH', lbl_diner_header: 'DINER',
+            lbl_banqueting_header: 'BANQUETING',
+            lbl_gerechten: 'Aantal à la carte gerechten',
+            lbl_gangen_lunch: 'Aantal gangen lunchmenu',
+            lbl_gangen_diner: 'Aantal gangen dinermenu',
+            lbl_banqueting: "Aantal banquetingmenu's",
+            err_aanbod: 'Vul alle velden in om door te gaan.',
+            s9_title: 'Inzicht in variabele kosten',
+            lbl_brutomarge: 'Gem. brutomarge keukenproduct (%)',
+            lbl_koks: 'Aantal koks (FTE)',
+            lbl_loonsom: 'Totale loonsom keuken per jaar (€)',
+            lbl_foodomzet: 'Totale foodomzet per jaar (€)',
+            lbl_inkoop: 'Inkoopwaarde food per jaar (€)',
+            lbl_leveranciers: 'Aantal leveranciers', lbl_leveringen: 'Leveringen per week',
+            ph_marge: 'Bijv. 70', ph_koks: 'Bijv. 3', ph_loonsom: 'Bijv. 150000',
+            ph_foodomzet: 'Bijv. 500000', ph_inkoop: 'Bijv. 150000',
+            ph_leveranciers: 'Bijv. 8', ph_leveringen: 'Bijv. 5',
+            err_kosten: 'Vul alle velden in om door te gaan.',
+            s10_title: 'Systematiek & Procedures',
+            s10_desc: 'Welke van de volgende zaken heeft u geregeld?',
+            chk_recepturen: 'Recepturen vastgelegd',
+            chk_gecalculeerd: 'Alle gerechten zijn gecalculeerd',
+            chk_miseenplace: 'Mise en place gepland o.b.v. prognose',
+            chk_haccp: 'HACCP-plan of digitaal systeem aanwezig',
+            chk_kassasysteem: 'Geïntegreerd F&B kassasysteem',
+            s11_title: 'Gasttevredenheid',
+            s11_desc: 'Beoordeel de volgende aspecten op een schaal van 1 tot 10.',
+            lbl_kwaliteit: 'Kwaliteit gerechten',
+            lbl_continuiteit: 'Continuïteit van het aanbod',
+            lbl_keuze: 'Keuze van menuitems', lbl_snelheid: 'Snelheid van serveren',
+            s12_title: 'Keukenteam',
+            lbl_teamtevredenheid: 'Tevredenheid keukenteam',
+            lbl_samenwerking: 'Samenwerking keuken & bediening',
+            lbl_gastkennis: 'Kennis van wensen van de gast',
+            lbl_dienstverband: 'Hoe lang blijven koks gemiddeld in dienst?',
+            dv_6m: 'Minder dan 6 maanden', dv_12m: '6 – 12 maanden',
+            dv_2j: '1 – 2 jaar', dv_2jplus: 'Meer dan 2 jaar',
+            err_team: 'Selecteer hoe lang koks gemiddeld in dienst blijven.',
+            s13_title: 'Waar mogen wij uw rapport naartoe sturen?',
+            s13_desc: 'Vul uw e-mailadres in om direct uw Keukenspiegel Score te ontvangen.',
+            ph_email: 'naam@bedrijf.nl', err_email: 'Vul een geldig e-mailadres in.',
+            btn_submit: 'Bekijk mijn resultaten',
+            btn_sending: 'Verzenden...', btn_analyzing: 'Analyseren...',
+            lbl_systematiek: 'Systematiek', lbl_gasttevredenheid: 'Gasttevredenheid',
+            lbl_keukenteam: 'Keukenteam', lbl_efficiency: 'Efficiency',
+            upsell_header: 'Aanbeveling',
+            upsell_text: 'Op basis van uw profiel kan Smart Cuisine uw keukenoperatie direct optimaliseren.',
+            btn_cta: 'Neem contact op', btn_restart: 'Assessment opnieuw doen',
+            res_excellent_title: 'Uitstekend – Uw keuken draait op hoog niveau',
+            res_excellent_text: 'Uw keukenoperatie scoort bovengemiddeld. Uw systematiek en teamwerk zijn sterk. Focus op finetuning om naar het absolute topniveau te groeien.',
+            res_good_title: 'Goed – Er zijn concrete verbeterpunten',
+            res_good_text: 'U heeft een solide basis, maar er liggen kansen om uw {w} te verbeteren. Met gerichte aandacht kunt u significante stappen maken.',
+            res_moderate_title: 'Matig – Aanzienlijke optimalisatie mogelijk',
+            res_moderate_text: 'Er is ruimte voor verbetering, met name op het gebied van {w}. Professionele begeleiding kan u helpen om snel resultaat te boeken.',
+            res_poor_title: 'Aandacht nodig – Professionele begeleiding aanbevolen',
+            res_poor_text: 'Uw keukenoperatie heeft op meerdere vlakken aandacht nodig. Een gerichte aanpak op {w} is de eerste stap naar verbetering.',
+            fs_fail: 'Verzenden mislukt: '
+        },
+        en: {
+            subtitle_default: 'Kitchen Mirror – Professional Kitchen Assessment',
+            subtitle_last: 'Last step', subtitle_result: 'Your result',
+            subtitle_step: 'Step {n} of {total}',
+            s1_title: 'Discover your kitchen\'s potential',
+            s1_desc: 'Answer a few questions about your kitchen operation and receive your Kitchen Mirror Score with actionable improvement points.',
+            s1_btn: 'Start Assessment',
+            s2_title: 'Your details',
+            lbl_bedrijf: 'Company name', lbl_contact: 'Contact person',
+            lbl_telefoon: 'Phone number', lbl_plaats: 'City',
+            ph_bedrijf: 'E.g. Restaurant The Golden Lion', ph_contact: 'Your name',
+            ph_telefoon: '+31 6 12345678', ph_plaats: 'Amsterdam',
+            err_naw: 'Please fill in all fields to continue.', btn_volgende: 'Next',
+            s3_title: 'What type of restaurant do you have?',
+            type_eetcafe: 'Pub restaurant', type_brasserie: 'Brasserie',
+            type_alacarte: 'Restaurant (à la carte)',
+            type_finedining: 'Fine dining / gastronomic',
+            type_afhaal: 'Takeaway & delivery restaurant', type_fastfood: 'Fast food / QSR',
+            type_internationaal: 'International / theme restaurant',
+            type_lunchroom: 'Lunchroom / coffee shop', type_grandcafe: 'Grand café',
+            type_hotel: 'Hotel restaurant', type_anders: 'Other',
+            ph_anders: 'Specify your restaurant type...',
+            s4_title: 'Breakfast – Service moments', s5_title: 'Lunch – Service moments',
+            s6_title: 'Dinner – Service moments',
+            s4_desc: 'Fill in the details about your breakfast service.',
+            s5_desc: 'Fill in the details about your lunch service.',
+            s6_desc: 'Fill in the details about your dinner service.',
+            lbl_dagen: 'Days per week', lbl_gasten: 'Guests per day',
+            lbl_omzet_gast: 'Revenue per guest (€)',
+            ph_dagen: '0-7', ph_gasten: 'Avg.', ph_omzet: 'Incl. VAT',
+            err_meal: 'Please fill in all fields to continue.',
+            skip_ontbijt: 'We don\'t serve breakfast – skip',
+            skip_lunch: 'We don\'t serve lunch – skip',
+            skip_diner: 'We don\'t serve dinner – skip',
+            s7_title: 'What do you offer for breakfast?',
+            ontbijt_buffet: 'Breakfast buffet', ontbijt_fixed: 'Fixed breakfast',
+            ontbijt_alacarte: 'À la carte breakfast',
+            s8_title: 'Menu – Lunch & Dinner',
+            s8_desc: 'Indicate your menu composition.',
+            lbl_lunch_header: 'LUNCH', lbl_diner_header: 'DINNER',
+            lbl_banqueting_header: 'BANQUETING',
+            lbl_gerechten: 'Number of à la carte dishes',
+            lbl_gangen_lunch: 'Number of lunch menu courses',
+            lbl_gangen_diner: 'Number of dinner menu courses',
+            lbl_banqueting: 'Number of banqueting menus',
+            err_aanbod: 'Please fill in all fields to continue.',
+            s9_title: 'Insight into variable costs',
+            lbl_brutomarge: 'Avg. gross margin kitchen product (%)',
+            lbl_koks: 'Number of chefs (FTE)',
+            lbl_loonsom: 'Total kitchen payroll per year (€)',
+            lbl_foodomzet: 'Total food revenue per year (€)',
+            lbl_inkoop: 'Food purchase value per year (€)',
+            lbl_leveranciers: 'Number of suppliers', lbl_leveringen: 'Deliveries per week',
+            ph_marge: 'E.g. 70', ph_koks: 'E.g. 3', ph_loonsom: 'E.g. 150000',
+            ph_foodomzet: 'E.g. 500000', ph_inkoop: 'E.g. 150000',
+            ph_leveranciers: 'E.g. 8', ph_leveringen: 'E.g. 5',
+            err_kosten: 'Please fill in all fields to continue.',
+            s10_title: 'Systems & Procedures',
+            s10_desc: 'Which of the following do you have in place?',
+            chk_recepturen: 'Recipes documented',
+            chk_gecalculeerd: 'All dishes are costed',
+            chk_miseenplace: 'Mise en place planned based on forecast',
+            chk_haccp: 'HACCP plan or digital system in place',
+            chk_kassasysteem: 'Integrated F&B POS system',
+            s11_title: 'Guest satisfaction',
+            s11_desc: 'Rate the following aspects on a scale of 1 to 10.',
+            lbl_kwaliteit: 'Quality of dishes',
+            lbl_continuiteit: 'Consistency of the offering',
+            lbl_keuze: 'Choice of menu items', lbl_snelheid: 'Speed of service',
+            s12_title: 'Kitchen team',
+            lbl_teamtevredenheid: 'Kitchen team satisfaction',
+            lbl_samenwerking: 'Kitchen & front-of-house cooperation',
+            lbl_gastkennis: 'Knowledge of guest preferences',
+            lbl_dienstverband: 'How long do chefs stay on average?',
+            dv_6m: 'Less than 6 months', dv_12m: '6 – 12 months',
+            dv_2j: '1 – 2 years', dv_2jplus: 'More than 2 years',
+            err_team: 'Select how long chefs stay on average.',
+            s13_title: 'Where should we send your report?',
+            s13_desc: 'Enter your email address to receive your Kitchen Mirror Score.',
+            ph_email: 'name@company.com', err_email: 'Please enter a valid email address.',
+            btn_submit: 'View my results',
+            btn_sending: 'Sending...', btn_analyzing: 'Analyzing...',
+            lbl_systematiek: 'Systems', lbl_gasttevredenheid: 'Guest satisfaction',
+            lbl_keukenteam: 'Kitchen team', lbl_efficiency: 'Efficiency',
+            upsell_header: 'Recommendation',
+            upsell_text: 'Based on your profile, Smart Cuisine can immediately optimize your kitchen operation.',
+            btn_cta: 'Get in touch', btn_restart: 'Retake assessment',
+            res_excellent_title: 'Excellent – Your kitchen performs at a high level',
+            res_excellent_text: 'Your kitchen operation scores above average. Your systems and teamwork are strong. Focus on fine-tuning to reach the absolute top level.',
+            res_good_title: 'Good – There are concrete areas for improvement',
+            res_good_text: 'You have a solid foundation, but there are opportunities to improve your {w}. With focused attention you can make significant progress.',
+            res_moderate_title: 'Moderate – Significant optimization possible',
+            res_moderate_text: 'There is room for improvement, particularly in {w}. Professional guidance can help you achieve results quickly.',
+            res_poor_title: 'Attention needed – Professional guidance recommended',
+            res_poor_text: 'Your kitchen operation needs attention in multiple areas. A targeted approach to {w} is the first step toward improvement.',
+            fs_fail: 'Submission failed: '
+        }
     };
 
     const progressBar = document.getElementById('progressBar');
@@ -852,16 +1075,40 @@
     }
 
     function updateHeader() {
+        var t = T[currentLang];
         stepSubtitle.classList.remove('hidden');
         if (currentStep === 1) {
-            stepSubtitle.innerText = 'Keukenspiegel – Professionele Keuken Assessment';
+            stepSubtitle.textContent = t.subtitle_default;
         } else if (currentStep === 13) {
-            stepSubtitle.innerText = 'Laatste stap';
+            stepSubtitle.textContent = t.subtitle_last;
         } else if (currentStep === 14) {
-            stepSubtitle.innerText = 'Uw resultaat';
+            stepSubtitle.textContent = t.subtitle_result;
         } else {
-            stepSubtitle.innerText = 'Stap ' + (currentStep - 1) + ' van ' + (TOTAL_STEPS - 2);
+            stepSubtitle.textContent = t.subtitle_step.replace('{n}', currentStep - 1).replace('{total}', TOTAL_STEPS - 2);
         }
+    }
+
+    /* ======== TAAL / LANGUAGE ======== */
+    function setLang(lang) {
+        currentLang = lang;
+        document.getElementById('langNL').classList.toggle('active', lang === 'nl');
+        document.getElementById('langEN').classList.toggle('active', lang === 'en');
+        document.documentElement.lang = lang;
+        applyTranslations();
+    }
+
+    function applyTranslations() {
+        var t = T[currentLang];
+        document.querySelectorAll('[data-t]').forEach(function(el) {
+            var key = el.getAttribute('data-t');
+            if (t[key] !== undefined) el.textContent = t[key];
+        });
+        document.querySelectorAll('[data-ph]').forEach(function(el) {
+            var key = el.getAttribute('data-ph');
+            if (t[key] !== undefined) el.placeholder = t[key];
+        });
+        updateHeader();
+        if (currentStep === 14 && lastScores) showResults(lastScores);
     }
 
     function updateProgress() {
@@ -1032,7 +1279,7 @@
         submitBtn.textContent = '';
         var sp = document.createElement('span'); sp.className = 'spinner';
         submitBtn.appendChild(sp);
-        submitBtn.appendChild(document.createTextNode(' Verzenden...'));
+        submitBtn.appendChild(document.createTextNode(' ' + T[currentLang].btn_sending));
 
         // Calculate scores
         var scores = calculateScores();
@@ -1092,7 +1339,7 @@
             });
 
             if (response.ok) {
-                submitBtn.textContent = 'Analyseren...';
+                submitBtn.textContent = T[currentLang].btn_analyzing;
                 setTimeout(function() {
                     goNext();
                     showResults(scores);
@@ -1102,9 +1349,9 @@
             }
         } catch (err) {
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Bekijk mijn resultaten';
+            submitBtn.textContent = T[currentLang].btn_submit;
             emailError.style.display = 'block';
-            emailError.innerText = 'Verzenden mislukt: ' + err.message;
+            emailError.textContent = T[currentLang].fs_fail + err.message;
         }
     }
 
@@ -1153,12 +1400,15 @@
 
     /* ======== RESULTATEN TONEN ======== */
     function showResults(scores) {
+        lastScores = scores;
+        var t = T[currentLang];
+
         // Animeer totaalscore
         var scoreEl = document.getElementById('scoreValue');
         var count = 0;
         var interval = setInterval(function() {
             if (count >= scores.total) { clearInterval(interval); }
-            else { count++; scoreEl.innerText = count; }
+            else { count++; scoreEl.textContent = count; }
         }, 20);
 
         // Breakdown bars
@@ -1172,19 +1422,20 @@
         // Titel & tekst
         var titleEl = document.getElementById('resultTitle');
         var textEl = document.getElementById('resultText');
+        var w = getWeakest(scores);
 
         if (scores.total >= 80) {
-            titleEl.innerText = 'Uitstekend – Uw keuken draait op hoog niveau';
-            textEl.innerText = 'Uw keukenoperatie scoort bovengemiddeld. Uw systematiek en teamwerk zijn sterk. Focus op finetuning om naar het absolute topniveau te groeien.';
+            titleEl.textContent = t.res_excellent_title;
+            textEl.textContent = t.res_excellent_text;
         } else if (scores.total >= 60) {
-            titleEl.innerText = 'Goed – Er zijn concrete verbeterpunten';
-            textEl.innerText = 'U heeft een solide basis, maar er liggen kansen om uw ' + getWeakest(scores) + ' te verbeteren. Met gerichte aandacht kunt u significante stappen maken.';
+            titleEl.textContent = t.res_good_title;
+            textEl.textContent = t.res_good_text.replace('{w}', w);
         } else if (scores.total >= 40) {
-            titleEl.innerText = 'Matig – Aanzienlijke optimalisatie mogelijk';
-            textEl.innerText = 'Er is ruimte voor verbetering, met name op het gebied van ' + getWeakest(scores) + '. Professionele begeleiding kan u helpen om snel resultaat te boeken.';
+            titleEl.textContent = t.res_moderate_title;
+            textEl.textContent = t.res_moderate_text.replace('{w}', w);
         } else {
-            titleEl.innerText = 'Aandacht nodig – Professionele begeleiding aanbevolen';
-            textEl.innerText = 'Uw keukenoperatie heeft op meerdere vlakken aandacht nodig. Een gerichte aanpak op ' + getWeakest(scores) + ' is de eerste stap naar verbetering.';
+            titleEl.textContent = t.res_poor_title;
+            textEl.textContent = t.res_poor_text.replace('{w}', w);
         }
     }
 
@@ -1195,11 +1446,12 @@
     }
 
     function getWeakest(scores) {
+        var t = T[currentLang];
         var items = [
-            { name: 'systematiek', score: scores.systematiek },
-            { name: 'gasttevredenheid', score: scores.gasttevredenheid },
-            { name: 'keukenteam', score: scores.keukenteam },
-            { name: 'efficiency', score: scores.efficiency }
+            { name: t.lbl_systematiek, score: scores.systematiek },
+            { name: t.lbl_gasttevredenheid, score: scores.gasttevredenheid },
+            { name: t.lbl_keukenteam, score: scores.keukenteam },
+            { name: t.lbl_efficiency, score: scores.efficiency }
         ];
         items.sort(function(a, b) { return a.score - b.score; });
         return items[0].name;
