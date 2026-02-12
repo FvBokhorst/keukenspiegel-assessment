@@ -1587,8 +1587,9 @@
         doc.setFontSize(12);
         doc.setFont('helvetica', 'bold');
         doc.setTextColor(197, 48, 48);
-        doc.textWithLink('www.smartcuisine.nl', cx, y, {
-            align: 'center',
+        var linkText = 'www.smartcuisine.nl';
+        var linkW = doc.getTextWidth(linkText);
+        doc.textWithLink(linkText, cx - linkW / 2, y, {
             url: 'https://www.smartcuisine.nl/'
         });
 
@@ -1599,9 +1600,23 @@
         doc.setTextColor(120, 113, 108);
         doc.text('SmartCuisine Keukenspiegel Assessment — ' + new Date().toLocaleDateString(), cx, 289, { align: 'center' });
 
-        // Save
+        // Save — robust download for Safari & all browsers
         var filename = 'Keukenspiegel-' + (data.bedrijf || 'Rapport').replace(/[^a-zA-Z0-9]/g, '_') + '.pdf';
-        doc.save(filename);
+        try {
+            var blob = doc.output('blob');
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(function() {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 100);
+        } catch(e) {
+            doc.save(filename);
+        }
     }
 
     // Init progress
