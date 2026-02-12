@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <style>
         :root {
@@ -801,6 +802,10 @@
             <a href="https://www.smartcuisine.nl/" target="_blank" class="action-btn" id="ctaLink" data-t="btn_cta">Neem contact op</a>
         </div>
 
+        <button class="action-btn" onclick="downloadPDF()" style="margin-top:var(--space-lg);background:var(--gradient-secondary);box-shadow:0 4px 15px rgba(0,0,0,0.4);" data-t="btn_pdf">
+            Download Rapport (PDF)
+        </button>
+
         <button onclick="location.reload()" style="background:none;border:none;color:var(--text-muted);margin-top:var(--space-xl);cursor:pointer;text-decoration:underline;font-size:0.85rem;" data-t="btn_restart">
             Assessment opnieuw doen
         </button>
@@ -922,7 +927,8 @@
             lbl_keukenteam: 'Keukenteam', lbl_efficiency: 'Efficiency',
             upsell_header: 'Aanbeveling',
             upsell_text: 'Op basis van uw profiel kan Smart Cuisine uw keukenoperatie direct optimaliseren.',
-            btn_cta: 'Neem contact op', btn_restart: 'Assessment opnieuw doen',
+            btn_cta: 'Neem contact op', btn_pdf: 'Download Rapport (PDF)',
+            btn_restart: 'Assessment opnieuw doen',
             res_excellent_title: 'Uitstekend – Uw keuken draait op hoog niveau',
             res_excellent_text: 'Uw keukenoperatie scoort bovengemiddeld. Uw systematiek en teamwerk zijn sterk. Focus op finetuning om naar het absolute topniveau te groeien.',
             res_good_title: 'Goed – Er zijn concrete verbeterpunten',
@@ -1019,7 +1025,8 @@
             lbl_keukenteam: 'Kitchen team', lbl_efficiency: 'Efficiency',
             upsell_header: 'Recommendation',
             upsell_text: 'Based on your profile, Smart Cuisine can immediately optimize your kitchen operation.',
-            btn_cta: 'Get in touch', btn_restart: 'Retake assessment',
+            btn_cta: 'Get in touch', btn_pdf: 'Download Report (PDF)',
+            btn_restart: 'Retake assessment',
             res_excellent_title: 'Excellent – Your kitchen performs at a high level',
             res_excellent_text: 'Your kitchen operation scores above average. Your systems and teamwork are strong. Focus on fine-tuning to reach the absolute top level.',
             res_good_title: 'Good – There are concrete areas for improvement',
@@ -1444,6 +1451,157 @@
         ];
         items.sort(function(a, b) { return a.score - b.score; });
         return items[0].name;
+    }
+
+    /* ======== PDF DOWNLOAD ======== */
+    function downloadPDF() {
+        var jsPDF = window.jspdf.jsPDF;
+        var doc = new jsPDF({ unit: 'mm', format: 'a4' });
+        var t = T[currentLang];
+        var s = lastScores;
+        if (!s) return;
+
+        var pw = 210; // page width
+        var cx = pw / 2; // center x
+        var y = 20;
+
+        // --- Header: dark bar ---
+        doc.setFillColor(12, 10, 9);
+        doc.rect(0, 0, pw, 50, 'F');
+
+        // Title
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(22);
+        doc.setFont('helvetica', 'bold');
+        doc.text('SmartCuisine', cx, 22, { align: 'center' });
+
+        // Subtitle
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(168, 162, 158);
+        doc.text(t.subtitle_default, cx, 32, { align: 'center' });
+
+        // Company name
+        doc.setFontSize(10);
+        doc.setTextColor(200, 200, 200);
+        doc.text(data.bedrijf + ' — ' + data.contact, cx, 42, { align: 'center' });
+
+        y = 65;
+
+        // --- Score circle ---
+        doc.setFillColor(41, 37, 36);
+        doc.circle(cx, y, 20, 'F');
+        doc.setDrawColor(197, 48, 48);
+        doc.setLineWidth(1.5);
+        doc.circle(cx, y, 20, 'S');
+
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(32);
+        doc.setFont('helvetica', 'bold');
+        doc.text(String(s.total), cx, y + 4, { align: 'center' });
+
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(168, 162, 158);
+        doc.text('/100', cx, y + 12, { align: 'center' });
+
+        y += 32;
+
+        // --- Result title ---
+        doc.setFontSize(15);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(239, 68, 68);
+        var titleText = document.getElementById('resultTitle').textContent;
+        var titleLines = doc.splitTextToSize(titleText, 150);
+        doc.text(titleLines, cx, y, { align: 'center' });
+        y += titleLines.length * 7 + 4;
+
+        // --- Result description ---
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(168, 162, 158);
+        var descText = document.getElementById('resultText').textContent;
+        var descLines = doc.splitTextToSize(descText, 150);
+        doc.text(descLines, cx, y, { align: 'center' });
+        y += descLines.length * 5 + 12;
+
+        // --- Score breakdown ---
+        var categories = [
+            { label: t.lbl_systematiek, score: s.systematiek },
+            { label: t.lbl_gasttevredenheid, score: s.gasttevredenheid },
+            { label: t.lbl_keukenteam, score: s.keukenteam },
+            { label: t.lbl_efficiency, score: s.efficiency }
+        ];
+
+        var barX = 40;
+        var barW = 90;
+
+        categories.forEach(function(cat) {
+            // Label
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(168, 162, 158);
+            doc.text(cat.label, barX - 2, y, { align: 'right' });
+
+            // Bar background
+            doc.setFillColor(50, 50, 50);
+            doc.roundedRect(barX + 2, y - 3, barW, 5, 2, 2, 'F');
+
+            // Bar fill
+            var fillW = (cat.score / 25) * barW;
+            doc.setFillColor(197, 48, 48);
+            doc.roundedRect(barX + 2, y - 3, fillW, 5, 2, 2, 'F');
+
+            // Score value
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(239, 68, 68);
+            doc.text(cat.score + '/25', barX + barW + 8, y, { align: 'left' });
+
+            y += 12;
+        });
+
+        y += 8;
+
+        // --- Separator ---
+        doc.setDrawColor(60, 60, 60);
+        doc.setLineWidth(0.3);
+        doc.line(30, y, 180, y);
+        y += 12;
+
+        // --- Recommendation ---
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(248, 113, 113);
+        doc.text(t.upsell_header, cx, y, { align: 'center' });
+        y += 8;
+
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(168, 162, 158);
+        var upsellLines = doc.splitTextToSize(t.upsell_text, 150);
+        doc.text(upsellLines, cx, y, { align: 'center' });
+        y += upsellLines.length * 5 + 15;
+
+        // --- Website link ---
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(197, 48, 48);
+        doc.textWithLink('www.smartcuisine.nl', cx, y, {
+            align: 'center',
+            url: 'https://www.smartcuisine.nl/'
+        });
+
+        // --- Footer bar ---
+        doc.setFillColor(12, 10, 9);
+        doc.rect(0, 280, pw, 17, 'F');
+        doc.setFontSize(8);
+        doc.setTextColor(120, 113, 108);
+        doc.text('SmartCuisine Keukenspiegel Assessment — ' + new Date().toLocaleDateString(), cx, 289, { align: 'center' });
+
+        // Save
+        var filename = 'Keukenspiegel-' + (data.bedrijf || 'Rapport').replace(/[^a-zA-Z0-9]/g, '_') + '.pdf';
+        doc.save(filename);
     }
 
     // Init progress
