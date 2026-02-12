@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartCuisine – Keukenspiegel Assessment</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --color-bg-primary: #0c0a09;
+            --color-bg-secondary: #1c1917;
+            --color-bg-tertiary: #292524;
+            --color-teal-dark: #7f1d1d;
+            --color-teal: #c53030;
+            --color-teal-light: #ef4444;
+            --color-cyan: #f87171;
+            --color-cyan-light: #fca5a5;
+            --color-navy: #44403c;
+            --color-silver: #d6d3d1;
+            --color-silver-light: #e7e5e4;
+            --color-white: #ffffff;
+            --text-primary: #f5f5f4;
+            --text-secondary: #a8a29e;
+            --text-muted: #78716c;
+            --gradient-primary: linear-gradient(135deg, #c53030 0%, #ef4444 100%);
+            --gradient-secondary: linear-gradient(135deg, #292524 0%, #7f1d1d 100%);
+            --glass-bg: rgba(12, 10, 9, 0.8);
+            --glass-border: rgba(239, 68, 68, 0.15);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            --font-primary: 'Rajdhani', sans-serif;
+            --font-secondary: 'Exo 2', sans-serif;
+            --transition-base: 0.3s ease;
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--color-bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-secondary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle at center, rgba(185,28,28,0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(248,113,113,0.1) 0%, transparent 40%);
+            animation: bgPulse 10s ease-in-out infinite alternate;
+            z-index: -1; pointer-events: none;
+        }
+        @keyframes bgPulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .quiz-container {
+            width: 100%; max-width: 600px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--glass-shadow);
+            padding: var(--space-2xl);
+            margin: var(--space-md);
+            position: relative; overflow: hidden;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        .progress-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            background: rgba(255,255,255,0.05);
+            border-top-left-radius: var(--radius-xl);
+            border-top-right-radius: var(--radius-xl);
+        }
+        .progress-bar {
+            height: 100%; background: var(--gradient-primary);
+            width: 0%; transition: width 0.4s cubic-bezier(0.25,1,0.5,1);
+            box-shadow: 0 0 10px var(--color-teal);
+        }
+
+        .header {
+            text-align: center; margin-bottom: var(--space-xl); width: 100%;
+            display: flex; flex-direction: column; align-items: center;
+            padding-top: var(--space-md);
+        }
+        .brand-logo {
+            max-width: 200px; height: auto; margin-bottom: var(--space-md);
+            border-radius: var(--radius-md);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            border: 1px solid rgba(239,68,68,0.1);
+        }
+        .brand-title {
+            font-family: var(--font-primary);
+            font-size: 1.8rem; font-weight: 700;
+            background: linear-gradient(135deg, var(--color-teal-light), var(--color-cyan), var(--color-silver-light));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; margin-bottom: var(--space-sm);
+        }
+        .subtitle {
+            color: var(--text-secondary); font-size: 0.9rem;
+            font-weight: 300; letter-spacing: 0.5px; min-height: 20px;
+        }
+
+        /* Steps */
+        .step {
+            width: 100%; opacity: 0; pointer-events: none; display: none;
+            transform: translateY(20px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .step.active {
+            opacity: 1; pointer-events: all;
+            display: flex; flex-direction: column;
+            transform: translateY(0);
+        }
+        .step.fade-out {
+            opacity: 0; transform: translateY(-20px);
+            pointer-events: none; transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .question-title {
+            font-family: var(--font-primary);
+            font-size: 1.5rem; font-weight: 600;
+            margin-bottom: var(--space-lg);
+            text-align: center; color: var(--color-white); line-height: 1.3;
+        }
+        .question-desc {
+            text-align: center; color: var(--text-secondary);
+            margin-bottom: var(--space-xl); font-size: 0.95rem; line-height: 1.5;
+        }
+
+        /* Option buttons */
+        .options-grid {
+            display: flex; flex-direction: column; gap: var(--space-sm);
+        }
+        .option-btn {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary); padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-md); cursor: pointer;
+            font-family: var(--font-secondary); font-size: 0.95rem;
+            text-align: left; transition: all var(--transition-base);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .option-btn:hover {
+            background: rgba(239,68,68,0.1);
+            border-color: var(--color-teal-light);
+            transform: translateX(5px);
+        }
+        .option-btn.selected {
+            background: rgba(239,68,68,0.15);
+            border-color: var(--color-cyan);
+        }
+
+        /* Checkbox options */
+        .checkbox-grid { display: flex; flex-direction: column; gap: var(--space-sm); }
+        .checkbox-btn {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary); padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-md); cursor: pointer;
+            font-family: var(--font-secondary); font-size: 0.95rem;
+            text-align: left; transition: all var(--transition-base);
+            display: flex; align-items: center; gap: var(--space-md);
+        }
+        .checkbox-btn:hover {
+            background: rgba(239,68,68,0.1);
+            border-color: var(--color-teal-light);
+        }
+        .checkbox-btn.checked {
+            background: rgba(239,68,68,0.15);
+            border-color: var(--color-cyan);
+        }
+        .check-icon {
+            width: 22px; height: 22px; border-radius: var(--radius-sm);
+            border: 2px solid var(--text-muted); display: flex;
+            align-items: center; justify-content: center;
+            transition: all var(--transition-base); flex-shrink: 0;
+        }
+        .checkbox-btn.checked .check-icon {
+            background: var(--gradient-primary); border-color: var(--color-teal);
+        }
+        .check-icon svg { opacity: 0; transition: opacity 0.2s ease; }
+        .checkbox-btn.checked .check-icon svg { opacity: 1; }
+
+        /* Input fields */
+        .input-group { margin-bottom: var(--space-md); }
+        .input-label {
+            display: block; color: var(--text-secondary);
+            font-size: 0.85rem; margin-bottom: var(--space-xs);
+            font-weight: 400;
+        }
+        .input-field {
+            width: 100%; padding: var(--space-md);
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            color: var(--color-white);
+            font-family: var(--font-secondary); font-size: 1rem;
+            outline: none; transition: var(--transition-base);
+        }
+        .input-field:focus {
+            border-color: var(--color-cyan);
+            box-shadow: 0 0 0 2px rgba(248,113,113,0.2);
+        }
+        .input-row {
+            display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md);
+        }
+        .input-row-3 {
+            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-md);
+        }
+        .input-suffix {
+            position: relative;
+        }
+        .input-suffix .input-field { padding-right: 2.5rem; }
+        .input-suffix::after {
+            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+            color: var(--text-muted); font-size: 0.9rem; pointer-events: none;
+        }
+        .suffix-euro::after { content: '€'; }
+        .suffix-pct::after { content: '%'; }
+
+        /* Range slider */
+        .slider-group { margin-bottom: var(--space-lg); }
+        .slider-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: var(--space-sm);
+        }
+        .slider-label { color: var(--text-secondary); font-size: 0.9rem; }
+        .slider-value {
+            font-family: var(--font-primary); font-size: 1.4rem;
+            font-weight: 700; color: var(--color-teal-light);
+            min-width: 2rem; text-align: right;
+        }
+        input[type="range"] {
+            -webkit-appearance: none; width: 100%; height: 6px;
+            background: rgba(255,255,255,0.1); border-radius: 3px;
+            outline: none; cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 22px; height: 22px;
+            background: var(--gradient-primary); border-radius: 50%;
+            cursor: pointer; border: 2px solid var(--color-white);
+            box-shadow: 0 0 10px rgba(239,68,68,0.4);
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 22px; height: 22px;
+            background: var(--gradient-primary); border-radius: 50%;
+            cursor: pointer; border: 2px solid var(--color-white);
+        }
+
+        /* Buttons */
+        .action-btn {
+            width: 100%; padding: var(--space-lg);
+            background: var(--gradient-primary); border: none;
+            border-radius: var(--radius-md);
+            color: var(--color-white);
+            font-family: var(--font-primary); font-weight: 700;
+            font-size: 1.1rem; text-transform: uppercase;
+            letter-spacing: 1px; cursor: pointer;
+            transition: var(--transition-base);
+            box-shadow: 0 4px 15px rgba(239,68,68,0.3);
+            margin-top: var(--space-md);
+            text-decoration: none; display: inline-block; text-align: center;
+        }
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(248,113,113,0.4);
+            filter: brightness(1.1);
+        }
+        .action-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .skip-btn {
+            background: none; border: none; color: var(--text-muted);
+            margin-top: var(--space-md); cursor: pointer;
+            text-decoration: underline; font-size: 0.85rem;
+            font-family: var(--font-secondary); align-self: center;
+        }
+        .skip-btn:hover { color: var(--text-secondary); }
+
+        .error-msg {
+            color: #ef4444; font-size: 0.85rem; margin-top: var(--space-sm);
+            display: none; background: rgba(239,68,68,0.1);
+            padding: var(--space-sm); border-radius: var(--radius-sm);
+            border: 1px solid rgba(239,68,68,0.2);
+        }
+
+        /* Other container */
+        .other-container {
+            animation: slideDown 0.3s ease forwards;
+            margin-top: var(--space-md); background: rgba(0,0,0,0.2);
+            padding: var(--space-md); border-radius: var(--radius-md);
+            border: 1px solid var(--glass-border);
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Results */
+        .result-card {
+            text-align: center; background: rgba(255,255,255,0.03);
+            border-radius: var(--radius-lg); padding: var(--space-xl);
+            margin-bottom: var(--space-xl); border: 1px solid var(--glass-border);
+            width: 100%;
+        }
+        .score-circle {
+            width: 120px; height: 120px; border-radius: 50%;
+            background: var(--gradient-secondary);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto var(--space-lg);
+            border: 3px solid var(--color-teal);
+            box-shadow: 0 0 20px rgba(185,28,28,0.4);
+        }
+        .score-number {
+            font-family: var(--font-primary); font-size: 2.8rem;
+            font-weight: 700; color: var(--color-white);
+        }
+        .result-title {
+            font-size: 1.3rem; font-weight: 600;
+            color: var(--color-teal-light); margin-bottom: var(--space-sm);
+        }
+        .result-text {
+            color: var(--text-secondary); margin-bottom: var(--space-lg);
+            line-height: 1.6; font-size: 0.95rem;
+        }
+
+        /* Score breakdown */
+        .score-breakdown { margin-top: var(--space-lg); text-align: left; }
+        .score-row {
+            display: flex; align-items: center; gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        .score-row-label {
+            flex: 0 0 140px; font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .score-bar-bg {
+            flex: 1; height: 8px; background: rgba(255,255,255,0.08);
+            border-radius: 4px; overflow: hidden;
+        }
+        .score-bar-fill {
+            height: 100%; background: var(--gradient-primary);
+            border-radius: 4px; transition: width 1s ease;
+        }
+        .score-row-value {
+            flex: 0 0 40px; text-align: right;
+            font-family: var(--font-primary); font-weight: 600;
+            color: var(--color-teal-light); font-size: 0.95rem;
+        }
+
+        .upsell-box {
+            background: linear-gradient(180deg, rgba(185,28,28,0.1), rgba(0,0,0,0));
+            border: 1px solid rgba(239,68,68,0.2);
+            border-radius: var(--radius-md); padding: var(--space-lg);
+            margin-top: var(--space-lg); width: 100%;
+        }
+        .upsell-header {
+            display: flex; align-items: center; justify-content: center;
+            gap: var(--space-sm); margin-bottom: var(--space-sm);
+            color: var(--color-cyan); font-family: var(--font-primary);
+            font-weight: 600; text-transform: uppercase; font-size: 0.9rem;
+        }
+
+        .spinner {
+            width: 20px; height: 20px;
+            border: 3px solid rgba(0,0,0,0.1);
+            border-top: 3px solid var(--color-white);
+            border-radius: 50%; animation: spin 1s linear infinite;
+            display: inline-block; margin-right: 8px; vertical-align: middle;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .hidden { display: none !important; }
+
+        @media (max-width: 480px) {
+            .quiz-container { padding: var(--space-lg); }
+            .question-title { font-size: 1.25rem; }
+            .input-row { grid-template-columns: 1fr; }
+            .input-row-3 { grid-template-columns: 1fr; }
+            .score-row-label { flex: 0 0 110px; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="header" id="quizHeader">
+        <img src="logo.png" alt="SmartCuisine Logo" class="brand-logo" onerror="this.style.display='none'">
+        <div class="brand-title">SmartCuisine</div>
+        <p class="subtitle" id="stepSubtitle">Keukenspiegel – Professionele Keuken Assessment</p>
+    </div>
+
+    <!-- ============ STAP 1: WELKOM ============ -->
+    <div class="step active" id="step-1">
+        <h2 class="question-title">Ontdek het potentieel van uw keuken</h2>
+        <p class="question-desc">
+            Beantwoord een aantal vragen over uw keukenoperatie en ontvang direct uw Keukenspiegel Score met concrete verbeterpunten.
+        </p>
+        <button class="action-btn" onclick="goNext()">Start Assessment</button>
+    </div>
+
+    <!-- ============ STAP 2: NAW ============ -->
+    <div class="step" id="step-2">
+        <h2 class="question-title">Uw gegevens</h2>
+        <div class="input-group">
+            <label class="input-label">Naam bedrijf</label>
+            <input type="text" id="nawBedrijf" class="input-field" placeholder="Bijv. Restaurant De Gouden Leeuw">
+        </div>
+        <div class="input-group">
+            <label class="input-label">Contactpersoon</label>
+            <input type="text" id="nawContact" class="input-field" placeholder="Uw naam">
+        </div>
+        <div class="input-row">
+            <div class="input-group">
+                <label class="input-label">Telefoonnummer</label>
+                <input type="tel" id="nawTelefoon" class="input-field" placeholder="06-12345678">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Plaats</label>
+                <input type="text" id="nawPlaats" class="input-field" placeholder="Amsterdam">
+            </div>
+        </div>
+        <div id="nawError" class="error-msg">Vul minimaal bedrijfsnaam en contactpersoon in.</div>
+        <button class="action-btn" onclick="submitNaw()">Volgende</button>
+    </div>
+
+    <!-- ============ STAP 3: TYPE RESTAURANT ============ -->
+    <div class="step" id="step-3">
+        <h2 class="question-title">Wat voor type restaurant heeft u?</h2>
+        <div class="options-grid">
+            <button class="option-btn" onclick="pickOption('type','Eetcafé')">Eetcafé <span style="color:var(--text-muted)">→</span></button>
+            <button class="option-btn" onclick="pickOption('type','Brasserie')">Brasserie <span style="color:var(--text-muted)">→</span></button>
+            <button class="option-btn" onclick="pickOption('type','Restaurant (à la carte)')">Restaurant (à la carte) <span style="color:var(--text-muted)">→</span></button>
+            <button class="option-btn" onclick="pickOption('type','Fine dining / gastronomisch')">Fine dining / gastronomisch <span style="color:var(--text-muted)">→</span></button>
+            <button class="option-btn" onclick="pickOption('type','Afhaal- en bezorgrestaurant')">Afhaal- en bezorgrestaurant <span style="color:var(--text-muted)">→</span></button>
+            <button class="option-btn" onclick="pickOption('type','Fastfood / QSR')">Fastfood / QSR <span style="color:var(--text-muted)">→</span></button>
+            <button class="option-btn" onclick="pickOption('type','Internationaal / themarestaurant')">Internationaal / themarestaurant <span style="color:var(--text-muted)">→</span></button>
+            <button class="option-btn" onclick="pickOption('type','Lunchroom / koffiezaak')">Lunchroom / koffiezaak <span style="color:var(--text-muted)">→</span></button>
+            <button class="option-btn" onclick="pickOption('type','Grand café')">Grand café <span style="color:var(--text-muted)">→</span></button>
+            <button class="option-btn" onclick="pickOption('type','Hotelrestaurant')">Hotelrestaurant <span style="color:var(--text-muted)">→</span></button>
+            <button class="option-btn" onclick="showOther('type')">Anders <span style="color:var(--text-muted)">→</span></button>
+        </div>
+        <div id="otherType" class="other-container hidden">
+            <input type="text" id="otherTypeInput" class="input-field" placeholder="Specificeer uw type restaurant...">
+            <button class="action-btn" onclick="confirmOther('type')">Volgende</button>
+        </div>
+    </div>
+
+    <!-- ============ STAP 4: ONTBIJT ============ -->
+    <div class="step" id="step-4">
+        <h2 class="question-title">Ontbijt – Serveermomenten</h2>
+        <p class="question-desc">Vul de gegevens in over uw ontbijtservice.</p>
+        <div class="input-row-3">
+            <div class="input-group">
+                <label class="input-label">Dagen per week</label>
+                <input type="number" id="ontbijtDagen" class="input-field" min="0" max="7" placeholder="0-7">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Gasten per dag</label>
+                <input type="number" id="ontbijtGasten" class="input-field" min="0" placeholder="Gem.">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Omzet per gast (€)</label>
+                <input type="number" id="ontbijtOmzet" class="input-field" min="0" step="0.50" placeholder="Incl. BTW">
+            </div>
+        </div>
+        <button class="action-btn" onclick="submitMeal('ontbijt')">Volgende</button>
+        <button class="skip-btn" onclick="skipMeal('ontbijt')">Wij serveren geen ontbijt – overslaan</button>
+    </div>
+
+    <!-- ============ STAP 5: LUNCH ============ -->
+    <div class="step" id="step-5">
+        <h2 class="question-title">Lunch – Serveermomenten</h2>
+        <p class="question-desc">Vul de gegevens in over uw lunchservice.</p>
+        <div class="input-row-3">
+            <div class="input-group">
+                <label class="input-label">Dagen per week</label>
+                <input type="number" id="lunchDagen" class="input-field" min="0" max="7" placeholder="0-7">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Gasten per dag</label>
+                <input type="number" id="lunchGasten" class="input-field" min="0" placeholder="Gem.">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Omzet per gast (€)</label>
+                <input type="number" id="lunchOmzet" class="input-field" min="0" step="0.50" placeholder="Incl. BTW">
+            </div>
+        </div>
+        <button class="action-btn" onclick="submitMeal('lunch')">Volgende</button>
+        <button class="skip-btn" onclick="skipMeal('lunch')">Wij serveren geen lunch – overslaan</button>
+    </div>
+
+    <!-- ============ STAP 6: DINER ============ -->
+    <div class="step" id="step-6">
+        <h2 class="question-title">Diner – Serveermomenten</h2>
+        <p class="question-desc">Vul de gegevens in over uw dinerservice.</p>
+        <div class="input-row-3">
+            <div class="input-group">
+                <label class="input-label">Dagen per week</label>
+                <input type="number" id="dinerDagen" class="input-field" min="0" max="7" placeholder="0-7">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Gasten per dag</label>
+                <input type="number" id="dinerGasten" class="input-field" min="0" placeholder="Gem.">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Omzet per gast (€)</label>
+                <input type="number" id="dinerOmzet" class="input-field" min="0" step="0.50" placeholder="Incl. BTW">
+            </div>
+        </div>
+        <button class="action-btn" onclick="submitMeal('diner')">Volgende</button>
+        <button class="skip-btn" onclick="skipMeal('diner')">Wij serveren geen diner – overslaan</button>
+    </div>
+
+    <!-- ============ STAP 7: AANBOD ONTBIJT ============ -->
+    <div class="step" id="step-7">
+        <h2 class="question-title">Wat biedt u aan bij het ontbijt?</h2>
+        <div class="options-grid">
+            <button class="option-btn" onclick="pickOption('ontbijtType','Ontbijtbuffet')">Ontbijtbuffet <span style="color:var(--text-muted)">→</span></button>
+            <button class="option-btn" onclick="pickOption('ontbijtType','Fixed ontbijt')">Fixed ontbijt <span style="color:var(--text-muted)">→</span></button>
+            <button class="option-btn" onclick="pickOption('ontbijtType','À la carte ontbijt')">À la carte ontbijt <span style="color:var(--text-muted)">→</span></button>
+        </div>
+    </div>
+
+    <!-- ============ STAP 8: AANBOD LUNCH & DINER ============ -->
+    <div class="step" id="step-8">
+        <h2 class="question-title">Aanbod – Lunch & Diner</h2>
+        <p class="question-desc">Geef een indicatie van uw menusamenstelling.</p>
+
+        <p style="color:var(--color-cyan);font-weight:600;margin-bottom:var(--space-sm);font-size:0.9rem;">LUNCH</p>
+        <div class="input-row">
+            <div class="input-group">
+                <label class="input-label">Aantal à la carte gerechten</label>
+                <input type="number" id="lunchGerechten" class="input-field" min="0" placeholder="0">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Aantal gangen lunchmenu</label>
+                <input type="number" id="lunchGangen" class="input-field" min="0" max="10" placeholder="0-10">
+            </div>
+        </div>
+
+        <p style="color:var(--color-cyan);font-weight:600;margin:var(--space-lg) 0 var(--space-sm);font-size:0.9rem;">DINER</p>
+        <div class="input-row">
+            <div class="input-group">
+                <label class="input-label">Aantal à la carte gerechten</label>
+                <input type="number" id="dinerGerechten" class="input-field" min="0" placeholder="0">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Aantal gangen dinermenu</label>
+                <input type="number" id="dinerGangen" class="input-field" min="0" max="10" placeholder="0-10">
+            </div>
+        </div>
+
+        <p style="color:var(--color-cyan);font-weight:600;margin:var(--space-lg) 0 var(--space-sm);font-size:0.9rem;">BANQUETING</p>
+        <div class="input-group">
+            <label class="input-label">Aantal banquetingmenu's</label>
+            <input type="number" id="banqueting" class="input-field" min="0" placeholder="0" style="max-width:200px;">
+        </div>
+
+        <button class="action-btn" onclick="goNext()">Volgende</button>
+    </div>
+
+    <!-- ============ STAP 9: VARIABELE KOSTEN ============ -->
+    <div class="step" id="step-9">
+        <h2 class="question-title">Inzicht in variabele kosten</h2>
+        <div class="input-row">
+            <div class="input-group">
+                <label class="input-label">Gem. brutomarge keukenproduct (%)</label>
+                <input type="number" id="brutomarge" class="input-field" min="0" max="100" placeholder="Bijv. 70">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Aantal koks (FTE)</label>
+                <input type="number" id="aantalKoks" class="input-field" min="0" step="0.5" placeholder="Bijv. 3">
+            </div>
+        </div>
+        <div class="input-group">
+            <label class="input-label">Totale loonsom keuken per jaar (€)</label>
+            <input type="number" id="loonsom" class="input-field" min="0" placeholder="Bijv. 150000">
+        </div>
+        <div class="input-row">
+            <div class="input-group">
+                <label class="input-label">Totale foodomzet per jaar (€)</label>
+                <input type="number" id="foodomzet" class="input-field" min="0" placeholder="Bijv. 500000">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Inkoopwaarde food per jaar (€)</label>
+                <input type="number" id="inkoop" class="input-field" min="0" placeholder="Bijv. 150000">
+            </div>
+        </div>
+        <div class="input-row">
+            <div class="input-group">
+                <label class="input-label">Aantal leveranciers</label>
+                <input type="number" id="leveranciers" class="input-field" min="0" placeholder="Bijv. 8">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Leveringen per week</label>
+                <input type="number" id="leveringen" class="input-field" min="0" placeholder="Bijv. 5">
+            </div>
+        </div>
+        <button class="action-btn" onclick="goNext()">Volgende</button>
+    </div>
+
+    <!-- ============ STAP 10: SYSTEMATIEK ============ -->
+    <div class="step" id="step-10">
+        <h2 class="question-title">Systematiek & Procedures</h2>
+        <p class="question-desc">Welke van de volgende zaken heeft u geregeld?</p>
+        <div class="checkbox-grid">
+            <button class="checkbox-btn" onclick="toggleCheck(this,'recepturen')">
+                <span class="check-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+                Recepturen vastgelegd
+            </button>
+            <button class="checkbox-btn" onclick="toggleCheck(this,'gecalculeerd')">
+                <span class="check-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+                Alle gerechten zijn gecalculeerd
+            </button>
+            <button class="checkbox-btn" onclick="toggleCheck(this,'miseenplace')">
+                <span class="check-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+                Mise en place gepland o.b.v. prognose
+            </button>
+            <button class="checkbox-btn" onclick="toggleCheck(this,'haccp')">
+                <span class="check-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+                HACCP-plan of digitaal systeem aanwezig
+            </button>
+            <button class="checkbox-btn" onclick="toggleCheck(this,'kassasysteem')">
+                <span class="check-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+                Geïntegreerd F&B kassasysteem
+            </button>
+        </div>
+        <button class="action-btn" onclick="goNext()">Volgende</button>
+    </div>
+
+    <!-- ============ STAP 11: GASTTEVREDENHEID ============ -->
+    <div class="step" id="step-11">
+        <h2 class="question-title">Gasttevredenheid</h2>
+        <p class="question-desc">Beoordeel de volgende aspecten op een schaal van 1 tot 10.</p>
+
+        <div class="slider-group">
+            <div class="slider-header">
+                <span class="slider-label">Kwaliteit gerechten</span>
+                <span class="slider-value" id="val-kwaliteit">5</span>
+            </div>
+            <input type="range" min="1" max="10" value="5" oninput="updateSlider('kwaliteit',this.value)">
+        </div>
+        <div class="slider-group">
+            <div class="slider-header">
+                <span class="slider-label">Continuïteit van het aanbod</span>
+                <span class="slider-value" id="val-continuiteit">5</span>
+            </div>
+            <input type="range" min="1" max="10" value="5" oninput="updateSlider('continuiteit',this.value)">
+        </div>
+        <div class="slider-group">
+            <div class="slider-header">
+                <span class="slider-label">Keuze van menuitems</span>
+                <span class="slider-value" id="val-keuze">5</span>
+            </div>
+            <input type="range" min="1" max="10" value="5" oninput="updateSlider('keuze',this.value)">
+        </div>
+        <div class="slider-group">
+            <div class="slider-header">
+                <span class="slider-label">Snelheid van serveren</span>
+                <span class="slider-value" id="val-snelheid">5</span>
+            </div>
+            <input type="range" min="1" max="10" value="5" oninput="updateSlider('snelheid',this.value)">
+        </div>
+        <button class="action-btn" onclick="goNext()">Volgende</button>
+    </div>
+
+    <!-- ============ STAP 12: KEUKENTEAM ============ -->
+    <div class="step" id="step-12">
+        <h2 class="question-title">Keukenteam</h2>
+
+        <div class="slider-group">
+            <div class="slider-header">
+                <span class="slider-label">Tevredenheid keukenteam</span>
+                <span class="slider-value" id="val-teamtevredenheid">5</span>
+            </div>
+            <input type="range" min="1" max="10" value="5" oninput="updateSlider('teamtevredenheid',this.value)">
+        </div>
+        <div class="slider-group">
+            <div class="slider-header">
+                <span class="slider-label">Samenwerking keuken & bediening</span>
+                <span class="slider-value" id="val-samenwerking">5</span>
+            </div>
+            <input type="range" min="1" max="10" value="5" oninput="updateSlider('samenwerking',this.value)">
+        </div>
+        <div class="slider-group">
+            <div class="slider-header">
+                <span class="slider-label">Kennis van wensen van de gast</span>
+                <span class="slider-value" id="val-gastkennis">5</span>
+            </div>
+            <input type="range" min="1" max="10" value="5" oninput="updateSlider('gastkennis',this.value)">
+        </div>
+
+        <p style="color:var(--text-secondary);font-size:0.9rem;margin:var(--space-md) 0 var(--space-sm);">Hoe lang blijven koks gemiddeld in dienst?</p>
+        <div class="options-grid">
+            <button class="option-btn" onclick="pickDienstverband('< 6 maanden',this)">Minder dan 6 maanden</button>
+            <button class="option-btn" onclick="pickDienstverband('6-12 maanden',this)">6 – 12 maanden</button>
+            <button class="option-btn" onclick="pickDienstverband('1-2 jaar',this)">1 – 2 jaar</button>
+            <button class="option-btn" onclick="pickDienstverband('> 2 jaar',this)">Meer dan 2 jaar</button>
+        </div>
+        <button class="action-btn" id="teamNextBtn" onclick="goNext()" style="margin-top:var(--space-lg);">Volgende</button>
+    </div>
+
+    <!-- ============ STAP 13: EMAIL ============ -->
+    <div class="step" id="step-13">
+        <h2 class="question-title">Waar mogen wij uw rapport naartoe sturen?</h2>
+        <p class="question-desc">Vul uw e-mailadres in om direct uw Keukenspiegel Score te ontvangen.</p>
+        <div class="input-group">
+            <input type="email" id="emailInput" class="input-field" placeholder="naam@bedrijf.nl">
+            <div id="emailError" class="error-msg">Vul een geldig e-mailadres in.</div>
+        </div>
+        <button class="action-btn" id="submitBtn" onclick="submitEmail()">Bekijk mijn resultaten</button>
+    </div>
+
+    <!-- ============ STAP 14: RESULTATEN ============ -->
+    <div class="step" id="step-14">
+        <div class="result-card">
+            <div class="score-circle">
+                <span class="score-number" id="scoreValue">0</span>
+            </div>
+            <h3 class="result-title" id="resultTitle">Berekenen...</h3>
+            <p class="result-text" id="resultText">Even geduld terwijl we uw score berekenen...</p>
+
+            <div class="score-breakdown">
+                <div class="score-row">
+                    <span class="score-row-label">Systematiek</span>
+                    <div class="score-bar-bg"><div class="score-bar-fill" id="bar-systematiek" style="width:0%"></div></div>
+                    <span class="score-row-value" id="val-bar-systematiek">0</span>
+                </div>
+                <div class="score-row">
+                    <span class="score-row-label">Gasttevredenheid</span>
+                    <div class="score-bar-bg"><div class="score-bar-fill" id="bar-gasttevredenheid" style="width:0%"></div></div>
+                    <span class="score-row-value" id="val-bar-gasttevredenheid">0</span>
+                </div>
+                <div class="score-row">
+                    <span class="score-row-label">Keukenteam</span>
+                    <div class="score-bar-bg"><div class="score-bar-fill" id="bar-keukenteam" style="width:0%"></div></div>
+                    <span class="score-row-value" id="val-bar-keukenteam">0</span>
+                </div>
+                <div class="score-row">
+                    <span class="score-row-label">Efficiency</span>
+                    <div class="score-bar-bg"><div class="score-bar-fill" id="bar-efficiency" style="width:0%"></div></div>
+                    <span class="score-row-value" id="val-bar-efficiency">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="upsell-box">
+            <div class="upsell-header">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                Aanbeveling
+            </div>
+            <p id="upsellText" style="font-size:0.9rem;color:var(--color-silver-light);margin-bottom:var(--space-md);">
+                Op basis van uw profiel kan Smart Cuisine uw keukenoperatie direct optimaliseren.
+            </p>
+            <a href="#" class="action-btn" id="ctaLink">Neem contact op</a>
+        </div>
+
+        <button onclick="location.reload()" style="background:none;border:none;color:var(--text-muted);margin-top:var(--space-xl);cursor:pointer;text-decoration:underline;font-size:0.85rem;">
+            Assessment opnieuw doen
+        </button>
+    </div>
+</div>
+
+<script>
+    /* ======== STATE ======== */
+    const TOTAL_STEPS = 14;
+    const FORMSPREE_ID = "xvzbkgpe";
+    let currentStep = 1;
+
+    const data = {
+        bedrijf: '', contact: '', telefoon: '', plaats: '',
+        type: '',
+        ontbijt: { active: false, dagen: 0, gasten: 0, omzet: 0 },
+        lunch:   { active: false, dagen: 0, gasten: 0, omzet: 0 },
+        diner:   { active: false, dagen: 0, gasten: 0, omzet: 0 },
+        ontbijtType: '',
+        lunchGerechten: 0, lunchGangen: 0,
+        dinerGerechten: 0, dinerGangen: 0,
+        banqueting: 0,
+        brutomarge: 0, aantalKoks: 0, loonsom: 0, foodomzet: 0, inkoop: 0,
+        leveranciers: 0, leveringen: 0,
+        systematiek: { recepturen: false, gecalculeerd: false, miseenplace: false, haccp: false, kassasysteem: false },
+        kwaliteit: 5, continuiteit: 5, keuze: 5, snelheid: 5,
+        teamtevredenheid: 5, samenwerking: 5, gastkennis: 5,
+        dienstverband: '',
+        email: ''
+    };
+
+    const progressBar = document.getElementById('progressBar');
+    const stepSubtitle = document.getElementById('stepSubtitle');
+
+    /* ======== NAVIGATIE ======== */
+    function goNext() {
+        var next = currentStep + 1;
+        if (next > TOTAL_STEPS) return;
+
+        // Smart skip: stap 7 overslaan als geen ontbijt
+        if (next === 7 && !data.ontbijt.active) {
+            next = 8;
+        }
+
+        transitionTo(next);
+    }
+
+    function transitionTo(targetStep) {
+        var cur = document.getElementById('step-' + currentStep);
+        cur.classList.remove('active');
+        cur.classList.add('fade-out');
+
+        setTimeout(function() {
+            cur.classList.remove('fade-out');
+            currentStep = targetStep;
+            var next = document.getElementById('step-' + currentStep);
+            next.classList.add('active');
+            updateHeader();
+            updateProgress();
+        }, 300);
+    }
+
+    function updateHeader() {
+        stepSubtitle.classList.remove('hidden');
+        if (currentStep === 1) {
+            stepSubtitle.innerText = 'Keukenspiegel – Professionele Keuken Assessment';
+        } else if (currentStep === 13) {
+            stepSubtitle.innerText = 'Laatste stap';
+        } else if (currentStep === 14) {
+            stepSubtitle.innerText = 'Uw resultaat';
+        } else {
+            stepSubtitle.innerText = 'Stap ' + (currentStep - 1) + ' van ' + (TOTAL_STEPS - 2);
+        }
+    }
+
+    function updateProgress() {
+        var pct = currentStep === 1 ? 5 : Math.round((currentStep / TOTAL_STEPS) * 100);
+        progressBar.style.width = pct + '%';
+    }
+
+    /* ======== STAP 2: NAW ======== */
+    function submitNaw() {
+        var bedrijf = document.getElementById('nawBedrijf').value.trim();
+        var contact = document.getElementById('nawContact').value.trim();
+        if (!bedrijf || !contact) {
+            document.getElementById('nawError').style.display = 'block';
+            return;
+        }
+        document.getElementById('nawError').style.display = 'none';
+        data.bedrijf = bedrijf;
+        data.contact = contact;
+        data.telefoon = document.getElementById('nawTelefoon').value.trim();
+        data.plaats = document.getElementById('nawPlaats').value.trim();
+        goNext();
+    }
+
+    /* ======== STAP 3: TYPE (+ Anders) ======== */
+    function pickOption(field, value) {
+        data[field] = value;
+        goNext();
+    }
+
+    function showOther(field) {
+        document.getElementById('other' + capitalize(field)).classList.remove('hidden');
+        document.getElementById('other' + capitalize(field) + 'Input').focus();
+    }
+
+    function confirmOther(field) {
+        var val = document.getElementById('other' + capitalize(field) + 'Input').value.trim();
+        if (!val) return;
+        data[field] = val;
+        goNext();
+    }
+
+    function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+    /* ======== STAP 4-6: SERVEERMOMENTEN ======== */
+    function submitMeal(meal) {
+        var dagen = parseInt(document.getElementById(meal + 'Dagen').value) || 0;
+        var gasten = parseInt(document.getElementById(meal + 'Gasten').value) || 0;
+        var omzet = parseFloat(document.getElementById(meal + 'Omzet').value) || 0;
+        data[meal] = { active: dagen > 0, dagen: dagen, gasten: gasten, omzet: omzet };
+        goNext();
+    }
+
+    function skipMeal(meal) {
+        data[meal] = { active: false, dagen: 0, gasten: 0, omzet: 0 };
+        goNext();
+    }
+
+    /* ======== STAP 10: CHECKBOXES ======== */
+    function toggleCheck(btn, key) {
+        btn.classList.toggle('checked');
+        data.systematiek[key] = btn.classList.contains('checked');
+    }
+
+    /* ======== STAP 11-12: SLIDERS ======== */
+    function updateSlider(key, val) {
+        document.getElementById('val-' + key).innerText = val;
+        data[key] = parseInt(val);
+    }
+
+    /* ======== STAP 12: DIENSTVERBAND ======== */
+    function pickDienstverband(val, btn) {
+        // Deselect all
+        btn.parentElement.querySelectorAll('.option-btn').forEach(function(b) {
+            b.classList.remove('selected');
+        });
+        btn.classList.add('selected');
+        data.dienstverband = val;
+    }
+
+    /* ======== STAP 13: EMAIL & SUBMIT ======== */
+    async function submitEmail() {
+        var emailInput = document.getElementById('emailInput');
+        var emailError = document.getElementById('emailError');
+        var submitBtn = document.getElementById('submitBtn');
+        var email = emailInput.value.trim();
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            emailError.style.display = 'block';
+            emailInput.style.borderColor = '#ef4444';
+            return;
+        }
+
+        emailError.style.display = 'none';
+        emailInput.style.borderColor = 'var(--glass-border)';
+        data.email = email;
+
+        // Collect remaining input fields
+        data.lunchGerechten = parseInt(document.getElementById('lunchGerechten').value) || 0;
+        data.lunchGangen = parseInt(document.getElementById('lunchGangen').value) || 0;
+        data.dinerGerechten = parseInt(document.getElementById('dinerGerechten').value) || 0;
+        data.dinerGangen = parseInt(document.getElementById('dinerGangen').value) || 0;
+        data.banqueting = parseInt(document.getElementById('banqueting').value) || 0;
+        data.brutomarge = parseFloat(document.getElementById('brutomarge').value) || 0;
+        data.aantalKoks = parseFloat(document.getElementById('aantalKoks').value) || 0;
+        data.loonsom = parseFloat(document.getElementById('loonsom').value) || 0;
+        data.foodomzet = parseFloat(document.getElementById('foodomzet').value) || 0;
+        data.inkoop = parseFloat(document.getElementById('inkoop').value) || 0;
+        data.leveranciers = parseInt(document.getElementById('leveranciers').value) || 0;
+        data.leveringen = parseInt(document.getElementById('leveringen').value) || 0;
+
+        // Loading state
+        submitBtn.disabled = true;
+        submitBtn.textContent = '';
+        var sp = document.createElement('span'); sp.className = 'spinner';
+        submitBtn.appendChild(sp);
+        submitBtn.appendChild(document.createTextNode(' Verzenden...'));
+
+        // Calculate scores
+        var scores = calculateScores();
+
+        // Build form data
+        var fd = new FormData();
+        fd.append('email', data.email);
+        fd.append('_subject', 'Keukenspiegel – ' + data.bedrijf);
+        fd.append('bedrijf', data.bedrijf);
+        fd.append('contactpersoon', data.contact);
+        fd.append('telefoon', data.telefoon);
+        fd.append('plaats', data.plaats);
+        fd.append('type_restaurant', data.type);
+        fd.append('totaalscore', scores.total);
+        fd.append('message',
+            'Bedrijf: ' + data.bedrijf +
+            '\nContact: ' + data.contact +
+            '\nTelefoon: ' + data.telefoon +
+            '\nPlaats: ' + data.plaats +
+            '\nType: ' + data.type +
+            '\n\nOntbijt: ' + (data.ontbijt.active ? data.ontbijt.dagen + ' dagen, ' + data.ontbijt.gasten + ' gasten, €' + data.ontbijt.omzet + '/gast' : 'Niet van toepassing') +
+            '\nLunch: ' + (data.lunch.active ? data.lunch.dagen + ' dagen, ' + data.lunch.gasten + ' gasten, €' + data.lunch.omzet + '/gast' : 'Niet van toepassing') +
+            '\nDiner: ' + (data.diner.active ? data.diner.dagen + ' dagen, ' + data.diner.gasten + ' gasten, €' + data.diner.omzet + '/gast' : 'Niet van toepassing') +
+            '\n\nOntbijt type: ' + (data.ontbijtType || 'N/A') +
+            '\nLunch gerechten: ' + data.lunchGerechten + ', gangen: ' + data.lunchGangen +
+            '\nDiner gerechten: ' + data.dinerGerechten + ', gangen: ' + data.dinerGangen +
+            '\nBanqueting: ' + data.banqueting +
+            '\n\nBrutomarge: ' + data.brutomarge + '%' +
+            '\nAantal koks: ' + data.aantalKoks + ' FTE' +
+            '\nLoonsom: €' + data.loonsom +
+            '\nFoodomzet: €' + data.foodomzet +
+            '\nInkoop: €' + data.inkoop +
+            '\nLeveranciers: ' + data.leveranciers +
+            '\nLeveringen/week: ' + data.leveringen +
+            '\n\nSystematiek: ' + Object.entries(data.systematiek).filter(function(e){return e[1]}).map(function(e){return e[0]}).join(', ') +
+            '\n\nGasttevredenheid:' +
+            '\n  Kwaliteit: ' + data.kwaliteit +
+            '\n  Continuïteit: ' + data.continuiteit +
+            '\n  Keuze: ' + data.keuze +
+            '\n  Snelheid: ' + data.snelheid +
+            '\n\nKeukenteam:' +
+            '\n  Tevredenheid: ' + data.teamtevredenheid +
+            '\n  Samenwerking: ' + data.samenwerking +
+            '\n  Gastkennis: ' + data.gastkennis +
+            '\n  Dienstverband: ' + data.dienstverband +
+            '\n\nSCORES:' +
+            '\n  Systematiek: ' + scores.systematiek + '/25' +
+            '\n  Gasttevredenheid: ' + scores.gasttevredenheid + '/25' +
+            '\n  Keukenteam: ' + scores.keukenteam + '/25' +
+            '\n  Efficiency: ' + scores.efficiency + '/25' +
+            '\n  TOTAAL: ' + scores.total + '/100'
+        );
+
+        try {
+            var response = await fetch('https://formspree.io/f/' + FORMSPREE_ID, {
+                method: 'POST', body: fd, headers: { 'Accept': 'application/json' }
+            });
+
+            if (response.ok) {
+                submitBtn.textContent = 'Analyseren...';
+                setTimeout(function() {
+                    goNext();
+                    showResults(scores);
+                }, 800);
+            } else {
+                throw new Error('Server fout (' + response.status + ')');
+            }
+        } catch (err) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Bekijk mijn resultaten';
+            emailError.style.display = 'block';
+            emailError.innerText = 'Verzenden mislukt: ' + err.message;
+        }
+    }
+
+    /* ======== SCORING ======== */
+    function calculateScores() {
+        // Systematiek: 5 punten per aangevinkt item (max 25)
+        var sysCount = Object.values(data.systematiek).filter(Boolean).length;
+        var systematiek = sysCount * 5;
+
+        // Gasttevredenheid: gemiddelde * 2.5 (max 25)
+        var gastAvg = (data.kwaliteit + data.continuiteit + data.keuze + data.snelheid) / 4;
+        var gasttevredenheid = Math.round(gastAvg * 2.5);
+
+        // Keukenteam: gemiddelde * 2 + dienstverband bonus (max 25)
+        var teamAvg = (data.teamtevredenheid + data.samenwerking + data.gastkennis) / 3;
+        var dienstBonus = 0;
+        if (data.dienstverband === '> 2 jaar') dienstBonus = 5;
+        else if (data.dienstverband === '1-2 jaar') dienstBonus = 3;
+        else if (data.dienstverband === '6-12 maanden') dienstBonus = 1;
+        var keukenteam = Math.min(25, Math.round(teamAvg * 2) + dienstBonus);
+
+        // Efficiency: brutomarge + kosten ratio (max 25)
+        var effMarge = 0;
+        if (data.brutomarge >= 70) effMarge = 12;
+        else if (data.brutomarge >= 60) effMarge = 9;
+        else if (data.brutomarge >= 50) effMarge = 6;
+        else if (data.brutomarge > 0) effMarge = 3;
+
+        var effKosten = 0;
+        if (data.foodomzet > 0) {
+            var ratio = data.loonsom / data.foodomzet;
+            if (ratio <= 0.25) effKosten = 13;
+            else if (ratio <= 0.30) effKosten = 10;
+            else if (ratio <= 0.40) effKosten = 7;
+            else if (ratio <= 0.50) effKosten = 4;
+            else effKosten = 2;
+        } else {
+            effKosten = 6; // geen data = neutrale score
+        }
+        var efficiency = Math.min(25, effMarge + effKosten);
+
+        var total = systematiek + gasttevredenheid + keukenteam + efficiency;
+
+        return { systematiek, gasttevredenheid, keukenteam, efficiency, total };
+    }
+
+    /* ======== RESULTATEN TONEN ======== */
+    function showResults(scores) {
+        // Animeer totaalscore
+        var scoreEl = document.getElementById('scoreValue');
+        var count = 0;
+        var interval = setInterval(function() {
+            if (count >= scores.total) { clearInterval(interval); }
+            else { count++; scoreEl.innerText = count; }
+        }, 20);
+
+        // Breakdown bars
+        setTimeout(function() {
+            showBar('systematiek', scores.systematiek, 25);
+            showBar('gasttevredenheid', scores.gasttevredenheid, 25);
+            showBar('keukenteam', scores.keukenteam, 25);
+            showBar('efficiency', scores.efficiency, 25);
+        }, 500);
+
+        // Titel & tekst
+        var titleEl = document.getElementById('resultTitle');
+        var textEl = document.getElementById('resultText');
+
+        if (scores.total >= 80) {
+            titleEl.innerText = 'Uitstekend – Uw keuken draait op hoog niveau';
+            textEl.innerText = 'Uw keukenoperatie scoort bovengemiddeld. Uw systematiek en teamwerk zijn sterk. Focus op finetuning om naar het absolute topniveau te groeien.';
+        } else if (scores.total >= 60) {
+            titleEl.innerText = 'Goed – Er zijn concrete verbeterpunten';
+            textEl.innerText = 'U heeft een solide basis, maar er liggen kansen om uw ' + getWeakest(scores) + ' te verbeteren. Met gerichte aandacht kunt u significante stappen maken.';
+        } else if (scores.total >= 40) {
+            titleEl.innerText = 'Matig – Aanzienlijke optimalisatie mogelijk';
+            textEl.innerText = 'Er is ruimte voor verbetering, met name op het gebied van ' + getWeakest(scores) + '. Professionele begeleiding kan u helpen om snel resultaat te boeken.';
+        } else {
+            titleEl.innerText = 'Aandacht nodig – Professionele begeleiding aanbevolen';
+            textEl.innerText = 'Uw keukenoperatie heeft op meerdere vlakken aandacht nodig. Een gerichte aanpak op ' + getWeakest(scores) + ' is de eerste stap naar verbetering.';
+        }
+    }
+
+    function showBar(id, value, max) {
+        var pct = Math.round((value / max) * 100);
+        document.getElementById('bar-' + id).style.width = pct + '%';
+        document.getElementById('val-bar-' + id).innerText = value + '/' + max;
+    }
+
+    function getWeakest(scores) {
+        var items = [
+            { name: 'systematiek', score: scores.systematiek },
+            { name: 'gasttevredenheid', score: scores.gasttevredenheid },
+            { name: 'keukenteam', score: scores.keukenteam },
+            { name: 'efficiency', score: scores.efficiency }
+        ];
+        items.sort(function(a, b) { return a.score - b.score; });
+        return items[0].name;
+    }
+
+    // Init progress
+    updateProgress();
+</script>
+</body>
+</html>
