@@ -49,6 +49,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
+            background: url('bg-kitchen.png') center center / cover no-repeat fixed;
             background-color: var(--color-bg-primary);
             color: var(--text-primary);
             font-family: var(--font-secondary);
@@ -62,17 +63,11 @@
 
         body::before {
             content: '';
-            position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: radial-gradient(circle at center, rgba(185,28,28,0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 20%, rgba(248,113,113,0.1) 0%, transparent 40%);
-            animation: bgPulse 10s ease-in-out infinite alternate;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(12, 10, 9, 0.55);
             z-index: -1; pointer-events: none;
-        }
-        @keyframes bgPulse {
-            0% { transform: scale(1); opacity: 0.8; }
-            100% { transform: scale(1.1); opacity: 1; }
         }
 
         .quiz-container {
